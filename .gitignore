@@ -61,4 +61,4 @@ typings/
 .next
 
 # dbs
-db/
+server/db/

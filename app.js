@@ -14,7 +14,7 @@ const PouchDB = require('pouchdb');
 const db = new PouchDB('server/db');
 
 // view engine setup
-app.set('views', path.join(__dirname, 'server/views'));
+app.set('views', path.join(__dirname, 'server', 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));

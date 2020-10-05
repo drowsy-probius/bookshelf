@@ -1,0 +1,1 @@
+DEBUG=bookshelf:* PORT=18000 yarn start:dev

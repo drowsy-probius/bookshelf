@@ -4,17 +4,21 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "start:dev": "nodemon ./bin/www"
+    "start:dev": "rm -r ./server/db/* && nodemon ./bin/www"
   },
   "dependencies": {
+    "colors": "^1.4.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
+    "express-session": "^1.17.1",
+    "file-type": "^15.0.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "node-sass-middleware": "0.11.0",
     "nodemon": "^2.0.4",
-    "pouchdb": "^7.2.2"
+    "pouchdb": "^7.2.2",
+    "pouchdb-find": "^7.2.2"
   }
 }

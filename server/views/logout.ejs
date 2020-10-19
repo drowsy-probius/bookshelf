@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ./common/head %>
+  </head>
+
+  <body>
+    <%-JSON.stringify(session)%>
+    <form action="/auth/logout" method="post">
+      <button type="submit">로그아웃</button>
+    </form>
+  </body>
+</html>

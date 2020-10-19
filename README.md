@@ -50,3 +50,6 @@ gallery에서
 
 ## reference
 https://www.npmjs.com/package/poly-ebook-server
+
+##
+라이브러리 폴더: ./books

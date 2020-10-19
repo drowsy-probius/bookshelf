@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <% include ./common/head %>
+    <!-- <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' /> -->
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <header>
+      <% include ./common/header %>
+    </header>
+
+    <main>
+      <h1><%= title %></h1>
+      <p>Welcome to <%= title %></p>
+      초기 설정시에 관리자 계정 설정
+      이후에는 로그인 된 상태면 목록 표시
+      <%= data %>
+    </main>
+    
+    <footer>
+      <% include ./common/footer %>
+    </footer>
+
   </body>
+
+  <script>
+    console.log(<%= data %>)
+  </script>
 </html>

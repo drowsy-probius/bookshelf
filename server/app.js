@@ -4,17 +4,16 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
+const session = require('express-session');
 
-const indexRouter = require('./server/routes/index');
-const usersRouter = require('./server/routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
 
-const PouchDB = require('pouchdb');
-const db = new PouchDB('server/db');
-
 // view engine setup
-app.set('views', path.join(__dirname, 'server', 'views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
@@ -29,8 +28,20 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use(session({
+  secret: '[conflict: Document update conflict]',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 2 * 1000 * 60 * 60 // 2 hours
+  }
+}));
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

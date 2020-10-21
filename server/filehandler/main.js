@@ -1,42 +1,32 @@
-const fs = require('fs');
+/********************** modules **************************/
 
-// file type
-const FileType = require('file-type');
-const readChunk = require('read-chunk');
+// common
+const fs = require('fs');
 const path = require('path');
+const readChunk = require('read-chunk');
+
+// check file type
+const FileType = require('file-type');
 
 // txt
 const iconvlite = require('iconv-lite');
 const chardet = require('chardet');
 
-// zip
+// zip, cbz
 const StreamZip = require('node-stream-zip');
 
+// epub, pdf
+
+// folder with pics
+
+// image processing
+const sharp = require('sharp');
+const { resolve } = require('path');
 
 
-/********************************************************/
+/******************** functions *************************/
 
-const encoding_str_convert = (str) => {
-  if(str === 'UTF-8'){
-    return 'utf8';
-  }else if(str === 'UTF-16 BE'){
-    return 'UTF-16BE';
-  }else if(str.startsWith('windows-')){
-    return str.split('-').join('');
-  }else if(str.startsWith('koi8')){
-    return str.toLowerCase();
-  }else{
-    return str;
-  }
-}
-
-const __zip_analyzer = (file) => {
-
-}
-
-/********************************************************/
-
-module.exports.filetype = (target) => {
+const __filetype = (target) => {
   return new Promise(async (resolve, reject) => {
     try{
       /* checks text files */
@@ -62,71 +52,145 @@ module.exports.filetype = (target) => {
   });
 }
 
-
-module.exports.preview = {
-  txt: (file, callback) => {
-    return new Promise( async (resolve, reject) => {
-      try{
-        await fs.promises.access(file); // check file exists
-
-        let buffer = await fs.promises.readFile(file);
-        let encoding = await chardet.detectFile(file);
-        encoding = encoding_str_convert(encoding);
-        let data = iconvlite.decode(buffer, encoding);
-        let preview = data.split(/\n\r|\n/).slice(0, 10).join('\n');
-
-        resolve(preview);
-      }catch(e){
-        reject(e);
-      }
-    });
-  },
-
-  zip: (file) => {
-    return new Promise( async (resolve, reject) => {
-
-    })
-  },
-
-  pdf: (file) => {
-
-  },
-
-  folder: (file) => {
-
+/* for txt file processing */
+/* convert 'chardet' format to 'iconvlite' format */
+const encoding_str_convert = (str) => {
+  if(str === 'UTF-8'){
+    return 'utf8';
+  }else if(str === 'UTF-16 BE'){
+    return 'UTF-16BE';
+  }else if(str.startsWith('windows-')){
+    return str.split('-').join('');
+  }else if(str.startsWith('koi8')){
+    return str.toLowerCase();
+  }else{
+    return str;
   }
 }
 
-module.exports.zip_analyzer = (file) => {
-  return __zip_analyzer(file);
+
+/* Promise<resized image buffer> */
+const resize_preview = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const image = sharp(buffer);
+    image.metadata((err, metadata) => {
+      if(metadata.width > metadata.height){
+        resolve( image.resize({height: 212}).png().toBuffer() );
+      }else{
+        resolve( image.resize({width: 150}).png().toBuffer() );
+      }
+    })
+  })
 }
 
-module.exports.zip_test = (file) => {
-  const zip = new StreamZip({
-    file: file,
-    storeEntries: true
-  });
 
-  zip.on('ready', () => {
-    console.log('Entries read: ' + zip.entriesCount);
-    let first = Object.values(zip.entries())[0];
-    console.log(first);
-    const data = zip.entryDataSync(first);
-    console.log(data);
-    // console.log(first);
-    // for (const entry of Object.values(zip.entries())) {
-    //     const desc = entry.isDirectory ? 'directory' : `${entry.size} bytes`;
-    //     console.log(`Entry ${entry.name}: ${desc}`);
-    // }
-    // Do not forget to close the file once you're done
-    zip.close()
-  });
 
-  /*  : big zip file
-  zip.on('entry', entry => {
-    // you can already stream this entry,
-    // without waiting until all entry descriptions are read (suitable for very large archives)
-    console.log(`Read entry ${entry.name}`);
-  });
-  */
+
+/******** preview functions **************/
+const __preview_txt = (file) => {
+  return new Promise( async (resolve, reject) => {
+    try{
+      await fs.promises.access(file); // check file exists
+
+      let buffer = await fs.promises.readFile(file);
+      let encoding = await chardet.detectFile(file);
+      encoding = encoding_str_convert(encoding);
+      let data = iconvlite.decode(buffer, encoding);
+      let preview = data.split(/\n\r|\n/).slice(0, 10).join('\n');
+
+      resolve(preview);
+    }catch(e){
+      reject(e);
+    }
+  })
+}
+
+const __preview_zip = (file) => {
+  return new Promise( async (resolve, reject) => {
+    try{
+      await fs.promises.access(file); // check file exists
+
+      let stats = await fs.promises.stat(file);
+      let preview = null;
+
+      if(stats.size < 26214400){  
+        // a small file; less than 25mb
+        console.debug(`small file; ${file}`.gray)
+        const zip = new StreamZip({
+          file: file,
+          storeEntries: true
+        });
+
+        zip.on('ready', () => {
+          let first = null;
+          for (const entry of Object.values(zip.entries())) {
+            if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
+              first = entry;
+              break;
+            }
+          }
+
+          preview = zip.entryDataSync(first.name);
+          resolve(resize_preview(preview))
+          zip.close();
+        });
+        zip.on('error', err => { reject(err); });
+      }else{  
+        // a big file; more or equal than 25mb
+        console.debug(`big file; ${file}`.gray)
+        const zip = new StreamZip({
+          file: file,
+          storeEntries: true
+        });
+
+        zip.on('entry', entry => {
+          if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
+            preview = zip.entryDataSync(entry.name);
+            resolve(resize_preview(preview));
+            zip.close();
+          }
+        });
+        zip.on('error', err => { reject(err); });
+      }
+    }catch(e){
+      reject(e);
+    }
+  })
+}
+
+const __preview_pdf = (file) => {
+
+}
+
+const __preview_folder = (folder) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+      const files = await fs.promises.readdir(folder, {withFileTypes:true});
+      for(const file of files){
+        if(['jpg', 'png', 'gif'].includes(file.name.split('.').pop())){
+          
+          resolve(resize_preview(
+            await fs.promises.readFile(path.join(folder, file.name)
+                  )));
+
+          break;
+        }
+      }
+    }catch(e){
+      reject(e);
+    }
+  })
+}
+
+/***************** modules ****************************/
+
+/* return Promise<{"ext": "zip", "mime": "application/zip"}> */
+module.exports.filetype = __filetype;
+
+/* return Promise<blob or txt> */
+module.exports.preview = {
+  txt: __preview_txt,
+  zip: __preview_zip,
+  pdf: __preview_pdf,
+  folder: __preview_folder
 }

@@ -58,10 +58,11 @@ const firstScan = (dir) => {
 const fileHandler = require('./filehandler/main');
 
 (async()=>{
-  let k = await fileHandler.filetype('/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사 50.txt');
-  let m = await fileHandler.filetype('/home/k123s456h/project/bookshelf/books/케이온!/케이온! 02.zip');
-  console.log(k);
-  console.log(m);
+  let preview = await fileHandler.preview.folder('/home/k123s456h/project/bookshelf/books/바라카몬 01');
+  console.log(preview);
+  fs.writeFile('test.png', preview, (e) => {
+    
+  });
 
   //let preview = await fileHandler.preview.txt('/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사 50.txt');
   //console.log(preview);
@@ -74,5 +75,15 @@ const fileHandler = require('./filehandler/main');
 
 })();
 
-fileHandler.zip_test('/home/k123s456h/project/bookshelf/books/케이온!/케이온! 02.zip');
-fileHandler.zip_test('/mnt/gdrive/E-books/만화/신과함께.cbz');
+/**test files
+
+local
+'/home/k123s456h/project/bookshelf/books/바라카몬 01'
+'/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사 50.txt'
+'/home/k123s456h/project/bookshelf/books/케이온!/케이온! 02.zip'
+'/home/k123s456h/project/bookshelf/books/1 - Harry Potter and the Sorcerer's Stone.pdf'
+
+remote
+'/mnt/gdrive/E-books/만화/신과함께.cbz'
+
+*/

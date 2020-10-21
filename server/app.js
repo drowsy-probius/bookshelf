@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(session({
-  secret: '[conflict: Document update conflict]',
+  secret: '[conflict: Document update conflict]', // for session security
   resave: false,
   saveUninitialized: true,
   cookie: {

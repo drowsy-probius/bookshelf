@@ -32,6 +32,7 @@ pure way
 
 JSZip: *.zip, *.cbz
 
+https://www.npmjs.com/package/node-stream-zip
 https://www.npmjs.com/package/ebook-cover-generator
 https://stuk.github.io/jszip/
 

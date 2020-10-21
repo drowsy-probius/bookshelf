@@ -2,29 +2,42 @@
 <html>
   <head>
     <% include ./common/head %>
-    <!-- <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' /> -->
   </head>
   <body>
-    <header>
-      <% include ./common/header %>
-    </header>
-
+    <% include ./common/header %>
     <main>
-      <h1><%= title %></h1>
-      <p>Welcome to <%= title %></p>
-      초기 설정시에 관리자 계정 설정
-      이후에는 로그인 된 상태면 목록 표시
-      <%= data %>
-    </main>
     
-    <footer>
-      <% include ./common/footer %>
-    </footer>
+      <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
 
+            <% if(books != null && books.length > 0){ %>
+              <% books.forEach(function(book) { %>
+                <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                  <div class="card mb-4 shadow-sm">
+                    <img class="card-img-to" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="<%= book._id %>" style="height: 225px; width: 100%; display: block;" src="#" data-holder-rendered="true">
+                    <div class="card-body">
+                      <p class="card-text"><%= book.path %></p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-sm btn-outline-secondary">btn1</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary">btn2</button>
+                        </div>
+                        <small class="text-muted">created time</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            <% }else{ %>
+              <p class="text-muted">라이브러리 스캔 중입니다.</p>
+            <% } %>
+
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <% include ./common/footer %>
   </body>
-
-  <script>
-    console.log(<%= data %>)
-  </script>
 </html>

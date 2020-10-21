@@ -13,6 +13,8 @@ const model = require("./model");
 const basedir = path.resolve("./books");
 
 // functions
+
+
 const firstScan = (dir) => {
   fs.readdir(dir, { withFileTypes: true }, (err, files) => {
     if (err) {
@@ -50,4 +52,27 @@ const firstScan = (dir) => {
 
 ///
 
-firstScan(basedir);
+//firstScan(basedir);
+
+
+const fileHandler = require('./filehandler/main');
+
+(async()=>{
+  let k = await fileHandler.filetype('/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사 50.txt');
+  let m = await fileHandler.filetype('/home/k123s456h/project/bookshelf/books/케이온!/케이온! 02.zip');
+  console.log(k);
+  console.log(m);
+
+  //let preview = await fileHandler.preview.txt('/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사 50.txt');
+  //console.log(preview);
+
+  // error case
+  //let preview2 = await fileHandler.preview.txt('/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사');
+  //console.log(preview2);
+
+  //let zip_preview = await fileHandler.preview.zip('/home/k123s456h/project/bookshelf/books/케이온!/케이온! 02.zip');
+
+})();
+
+fileHandler.zip_test('/home/k123s456h/project/bookshelf/books/케이온!/케이온! 02.zip');
+fileHandler.zip_test('/mnt/gdrive/E-books/만화/신과함께.cbz');

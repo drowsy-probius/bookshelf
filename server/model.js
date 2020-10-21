@@ -76,7 +76,7 @@ module.exports.book = class {
         this.parent = '';
         this.added = '';  // Date
         this.last_seen_page = 0;
-        this.thumbnail = '';
+        this.preview = '';
         this.owner = ''; // user _id
     }
 
@@ -88,7 +88,7 @@ module.exports.book = class {
             parent: ${this.parent},
             added: ${this.added},
             last_seen_page: ${this.last_seen_page},
-            thumbnail: ${this.thumbnail},
+            preview: ${this.preview},
             owner: ${this.owner}
         }`
     }
@@ -111,7 +111,7 @@ module.exports.library = {
     
     get_all: async (pageSize=20, offset=0) => {
         try{
-            let options = {limit : pageSize, skip : offset};
+            let options = {limit : pageSize, skip : offset, include_docs: true};
             let response = await db_library.allDocs(options);
             if (response && response.rows.length > 0) {
                 options.startkey = response.rows[response.rows.length - 1].id;

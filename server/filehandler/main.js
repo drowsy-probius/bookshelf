@@ -30,75 +30,8 @@ const encoding_str_convert = (str) => {
   }
 }
 
-const buffer_to_int = (buf) => {
-  return parseInt(buf.reverse().toString('hex'), 16);
-}
-
-
 const __zip_analyzer = (file) => {
-  const CHUNKSIZE = 1024;
-  const EOCD_SIGNATURE = Buffer.from('504b0506', 'hex');
-  const CD_SIGNATURE = Buffer.from('504b0102', 'hex');
 
-  return new Promise( async (resolve, reject) => {
-    const stats = await fs.promises.stat(file);
-    let idx, tmp, buffer, startidx, ptr;
-
-    let EOCD = {
-      "SIGNATURE": EOCD_SIGNATURE,
-      "startAddress": -1,
-      "numberOfCentralDirectory": -1,
-      "sizeOfCentralDirectory": -1,
-      "offsetOfDirectoryRecords": -1,
-    }
-    let CD = {
-      "SIGNATURE": CD_SIGNATURE,
-      "start": -1,
-      "versionMadeBy": -1,
-      "versionNeededToExtract": -1,
-      "flag": -1,
-      "compressedMethod": -1,
-      "modtime": -1,
-      "uncompressedSize": -1,
-      
-    }
-
-    /*** End of Central Directory **/
-    startidx = stats.size-CHUNKSIZE < 0 ? 0 : stats.size-CHUNKSIZE;
-    tmp = await readChunk(file, startidx, CHUNKSIZE);
-    buffer = Buffer.from(tmp);
-
-    while( buffer.indexOf(EOCD.SIGNATURE) == -1 ){
-      console.log(buffer);
-      if(startidx == stats.size - CHUNKSIZE){
-        reject('it is not a zip file.');
-        break;
-      }
-      startidx = stats.size - CHUNKSIZE < 0 ? 0 : stats.size - CHUNKSIZE;
-      tmp = await readChunk(file, startidx, CHUNKSIZE + 3);
-      buffer = Buffer.from(tmp + buffer);
-    }
-    ptr = 0;
-    EOCD.startAddress = startidx + buffer.indexOf(EOCD.SIGNATURE);
-    ptr = buffer.indexOf(EOCD.SIGNATURE);
-    ptr += 4 + 2 + 2 + 2;
-    EOCD.numberOfCentralDirectory = buffer_to_int(buffer.slice(ptr, ptr+2));
-    ptr += 2;
-    EOCD.sizeOfCentralDirectory = buffer_to_int(buffer.slice(ptr, ptr+4));
-    ptr += 4;
-    EOCD.offsetOfDirectoryRecords = buffer_to_int(buffer.slice(ptr, ptr+4));
-    /* some processing part */
-    /* central directory infromation, ... */
-
-
-    /** Central Directory **/
-    console.log(stats.size);
-    buffer = Buffer.from(await readChunk(file, EOCD.offsetOfDirectoryRecords, EOCD.sizeOfCentralDirectory));
-    console.log(buffer);
-    /* some processing part */
-
-
-  });
 }
 
 /********************************************************/

@@ -21,7 +21,7 @@ const StreamZip = require('node-stream-zip');
 
 // image processing
 const sharp = require('sharp');
-const { resolve } = require('path');
+//const { resolve } = require('path');
 
 
 /******************** functions *************************/
@@ -75,9 +75,9 @@ const resize_preview = (buffer) => {
     const image = sharp(buffer);
     image.metadata((err, metadata) => {
       if(metadata.width > metadata.height){
-        resolve( image.resize({height: 212}).png().toBuffer() );
+        resolve( image.resize({height: 141}).png().toBuffer() );
       }else{
-        resolve( image.resize({width: 150}).png().toBuffer() );
+        resolve( image.resize({width: 100}).png().toBuffer() );
       }
     })
   })
@@ -113,14 +113,16 @@ const __preview_zip = (file) => {
       let stats = await fs.promises.stat(file);
       let preview = null;
 
-      if(stats.size < 26214400){  
-        // a small file; less than 25mb
-        console.debug(`small file; ${file}`.gray)
-        const zip = new StreamZip({
-          file: file,
-          storeEntries: true
-        });
+      const zip = new StreamZip({
+        file: file,
+        storeEntries: true
+      });
 
+      if(stats.size < 26214400){  
+        /**
+         * small file
+         * less than 25mb
+         */
         zip.on('ready', () => {
           let first = null;
           for (const entry of Object.values(zip.entries())) {
@@ -134,15 +136,11 @@ const __preview_zip = (file) => {
           resolve(resize_preview(preview))
           zip.close();
         });
-        zip.on('error', err => { reject(err); });
       }else{  
-        // a big file; more or equal than 25mb
-        console.debug(`big file; ${file}`.gray)
-        const zip = new StreamZip({
-          file: file,
-          storeEntries: true
-        });
-
+        /**
+         * big file
+         * more or equal than 25mb
+         */
         zip.on('entry', entry => {
           if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
             preview = zip.entryDataSync(entry.name);
@@ -150,8 +148,11 @@ const __preview_zip = (file) => {
             zip.close();
           }
         });
-        zip.on('error', err => { reject(err); });
+        
+        zip.close();
       }
+
+      zip.on('error', err => { reject(err);});
     }catch(e){
       reject(e);
     }
@@ -166,7 +167,9 @@ const __preview_folder = (folder) => {
   return new Promise(async (resolve, reject) => {
     try{
       const files = await fs.promises.readdir(folder, {withFileTypes:true});
-      for(const file of files){
+
+      for(let i=0; i<files.length; i++){
+        const file = files[i];
         if(['jpg', 'png', 'gif'].includes(file.name.split('.').pop())){
           
           resolve(resize_preview(
@@ -176,6 +179,7 @@ const __preview_folder = (folder) => {
           break;
         }
       }
+
     }catch(e){
       reject(e);
     }

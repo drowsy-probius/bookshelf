@@ -16,3 +16,7 @@ module.exports.index = async (req, res, next) => {
         res.render('login');
     }
 }
+
+module.exports.dev = async (req, res, next) => {
+    res.render('dev');
+}

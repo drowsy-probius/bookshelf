@@ -4,65 +4,146 @@
 // get basedir info from ../bin/www
 
 const fs = require("fs");
-const FileType = require("file-type");
 const path = require("path");
-const colors = require("colors");
 
 const model = require("./model");
-
-const basedir = path.resolve("./books");
-
-// functions
+const fileHandler = require('./filehandler/main');
 
 
-const firstScan = (dir) => {
-  fs.readdir(dir, { withFileTypes: true }, (err, files) => {
-    if (err) {
-      console.error(err.red);
-      console.trace();
-    } else {
-      files.forEach(async (file) => {
-        if (file.isFile()) {
-          try {
-            let type = await FileType.fromFile(path.join(dir, file.name));
-            type = type ? type.ext : file.name.split(".").pop();
 
-            let book = new model.book();
-            book.type = type;
-            book.path = path.join(dir, file.name);
-            book._id = book.path;
-            book.parent = dir;
-            book.added = new Date().toJSON();
-            book.last_seen_page = 0;
 
-            model.library.put(book);
-          } catch (e) {
-            console.error(e.red);
-            console.trace();
+/*********** inner funcitons *************/
+
+const __scanDirectory = async (dir) => 
+{
+  try
+  {
+    const files = await fs.promises.readdir(dir, {withFileTypes:true});
+
+    for(let i=0; i<files.length; i++)
+    {
+      const file = files[i];
+      const target = path.join(dir, file.name);
+
+      if(file.isDirectory())
+      {
+        /**
+         * IF all files in a directory is picture, 
+         * THEN consider it as a book.
+         * ELSE recursive scan on the directory.
+         */
+        const _folder = await fs.promises.readdir(target, {withFileTypes:true});
+        let isBook = true;
+        
+        for(let j=0; j<_folder.length; j++){
+          const _file = _folder[j];
+          if(_file.isDirectory())
+          {
+            isBook = false;
+            break;
           }
-        } else {
-          // this is folder
-          // do recursive work
-          firstScan(path.join(dir, file.name));
+          else if(_file.isFile())
+          {
+            const ext = _file.name.split('.').pop();
+            if( !['jpg', 'png', 'gif'].includes(ext) )
+            {
+              isBook = false;
+              break;
+            }
+          }
         }
-      });
+        
+        if(isBook)
+        {
+          let _preview = await fileHandler.preview.folder(target);
+          let book = new model.book();
+
+          book.type = 'folder';
+          book.path = target;
+          book.parent = dir.split('/').pop();
+          book.added = new Date().getTime();
+          book.last_seen_page = 0;
+          book.preview = _preview;
+          book.group = '*';
+
+          model.library.put(book);
+        }
+        else
+        {
+          __scanDirectory(target);
+        }
+
+      }
+      else if(file.isFile())
+      {
+        /**
+         * IF it is a file,
+         * THEN it would be one of zip, txt, pdf, epub, ...
+         */
+        let typeinfo = await fileHandler.filetype(target);
+
+        if( ['jpg', 'png', 'gif'].includes(typeinfo.ext) )
+        {
+          continue;
+        }
+
+        let _preview = await fileHandler.preview[typeinfo.ext](target);
+        let book = new model.book();
+
+        book.type = typeinfo.ext;
+        book.path = target;
+        book.parent = dir.split('/').pop();
+        book.added = new Date().getTime();
+        book.last_seen_page = 0;
+        book.preview = _preview;
+        book.group = '*';
+
+        model.library.put(book);
+      }
+      else
+      {
+        /**
+         * neither folder nor file
+         * pass
+         */
+      }
+
     }
-  });
-};
+  }
+  catch(e)
+  {
+    console.error(e);
+    console.trace();
+  }
+}
+
+
+const __watch = async (_dir) => 
+{
+
+}
+
 
 ///
 
-//firstScan(basedir);
+
+/*********** modules *******************/
+
+module.exports.init = __scanDirectory;
+
+module.exports.watch = __watch;
 
 
-const fileHandler = require('./filehandler/main');
 
+
+
+/// test
 (async()=>{
-  let preview = await fileHandler.preview.folder('/home/k123s456h/project/bookshelf/books/바라카몬 01');
-  console.log(preview);
-  fs.writeFile('test.png', preview, (e) => {
-    
-  });
+  // let preview = await fileHandler.preview.folder('/home/k123s456h/project/bookshelf/books/바라카몬 01');
+  // // console.log(preview);
+  // // fs.writeFile('test.png', preview, (e) => {
+
+  // // });
 
   //let preview = await fileHandler.preview.txt('/home/k123s456h/project/bookshelf/books/달빛조각사 1-58권/달빛조각사 50.txt');
   //console.log(preview);

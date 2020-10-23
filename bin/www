@@ -1,19 +1,28 @@
 #!/usr/bin/env node
 
 /**
+ * Library Processing
+ */
+
+const path = require('path');
+const fileprocess = require('../server/fileprocess');
+const basedir = process.env.DIR || path.resolve("./books");
+
+fileprocess.init(basedir);
+
+/**
  * Module dependencies.
  */
 
-const fileProcess = require('../server/fileprocess');
 const app = require('../server/app');
 const debug = require('debug')('bookshelf:server');
 const http = require('http');
+const {socket} = require('../server/controllers/socket');
 
 /**
  * Get port from environment and store in Express.
  */
 
-const baseDir = process.env.DIR || './';
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -22,6 +31,7 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+socket( require('socket.io')(server) );
 
 /**
  * Listen on provided port, on all network interfaces.

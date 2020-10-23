@@ -54,3 +54,8 @@ https://www.npmjs.com/package/poly-ebook-server
 
 ##
 라이브러리 폴더: ./books
+
+
+## socket.io
+https://socket.io/docs/server-api/#Flag-%E2%80%98binary%E2%80%99-1
+https://socket.io/docs/client-api/#socket-binary-value

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ./common/head %>
+  </head>
+  <body>
+    dev page
+    <div id='content'>
+
+    </div>
+  </body>
+  <script>
+    const socket = io({forceNew: true});
+    socket.on('connect', function(){socket.emit('eventName', 'message')});
+    socket.on('event', function(data){});
+    socket.on('disconnect', function(){});
+  </script>
+</html>

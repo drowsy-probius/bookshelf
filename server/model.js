@@ -1,30 +1,30 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
-const colors = require('colors');
-
+const __colors = require('colors');
 
 const db_settings = new PouchDB(path.join(__dirname, 'db/settings'));
 const db_library = new PouchDB(path.join(__dirname, 'db/libarary'));
 
-let iter = class{
+
+/*************** inner functions *********************/
+
+let __setting = class {
     constructor(){
-        this._id = 'iter';
-        this.settings = 0;
-        this.library = 0;
+        this._id = 'setting';
+        this.value = '';
+        this.users = [];
+    }
+
+    toString(){
+        return `{
+
+        }`
     }
 }
 
-// init iterator
-//db_iter.info().then(info => {if(!info.doc_count){db_iter.put(new iter())}});
-
-
-let default_setting = {
-}
-
-module.exports.user = class {
+let __user = class {
     constructor(){
-        this._id = '';  // equals to username
         this.username = '';
         this.password = ''; // encrypted
         this.group = '';
@@ -32,7 +32,6 @@ module.exports.user = class {
 
     toString(){
         return `{
-            _id: ${this._id},
             username: ${this.username},
             password: ${this.password}, 
             group: ${this.group}
@@ -40,44 +39,16 @@ module.exports.user = class {
     }
 }
 
-module.exports.settings = {
-    put: (obj) => {
-
-    },
-
-    update: (_id, obj) => {
-
-    },
-
-    get: ({key, value}) => {
-        db_library.createIndex({
-            index: {
-                fields: [key]
-            }
-        }).then(() => {
-            return db_library.find({
-                selector: {key: {$regex: `*${value}*` }}
-            });
-        });
-    },
-
-    delete: (_id) => {
-
-    }
-}
-
-
-
-module.exports.book = class {
+let __book = class {
     constructor(){
-        this._id = '';  // equals to path (absolute)
+        this._id = ''
         this.type = '';  //txt, pdf, cbz, folder, ...
         this.path = '';
         this.parent = '';
         this.added = '';  // Date
         this.last_seen_page = 0;
         this.preview = '';
-        this.owner = ''; // user _id
+        this.group = ''; // user _id
     }
 
     toString(){
@@ -89,20 +60,47 @@ module.exports.book = class {
             added: ${this.added},
             last_seen_page: ${this.last_seen_page},
             preview: ${this.preview},
-            owner: ${this.owner}
+            group: ${this.group}
         }`
     }
 }
 
-module.exports.library = {
+
+let __settings = {
     put: async (obj) => {
-        db_library.put(obj).then(()=>{
-            console.debug(`[DEBUG] new book added! \n${obj.toString()}`.gray);
-        })
-        .catch(e=>{
+        await db_settings.put(obj);
+    },
+    update: async (obj) => {
+        await db_settings.put(obj);
+    },
+    get: ({key, value}) => {
+        db_library.createIndex({
+            index: {
+                fields: [key]
+            }
+        }).then(() => {
+            return db_library.find({
+                selector: {key: {$regex: `*${value}*` }}
+            });
+        });
+    },
+    delete: ()=>{
+
+    }
+}
+
+let __library = {
+    put: async (obj) => {
+        try{
+            obj._id = `${obj.path}8^8${new Date().getTime()}`
+            await db_library.put(obj);
+
+            console.log(`message from 'library.put @model.js'`)
+            console.log(`[DEBUG] new book added! \n${obj.toString()}`.gray)
+        }catch(e){
             console.error(e);
             console.trace();
-        })
+        }
     },
 
     update: (_id, obj) => {
@@ -126,7 +124,8 @@ module.exports.library = {
     },
 
     get: ({key, value}) => {
-
+        // queries
+        // https://pouchdb.com/guides/mango-queries.html
     },
 
     delete: (_id) => {
@@ -135,5 +134,16 @@ module.exports.library = {
 }
 
 
-// queries
-// https://pouchdb.com/guides/mango-queries.html
+// iterator 초기화
+// db_iter.info().then(info => {if(!info.doc_count){db_iter.put(new iter())}});
+
+
+/************** modules *****************/
+
+module.exports.user = __user;
+
+module.exports.settings = __settings;
+
+module.exports.book = __book;
+
+module.exports.library = __library;

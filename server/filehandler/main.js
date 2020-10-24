@@ -120,39 +120,46 @@ const __preview_zip = (file) => {
         storeEntries: true
       });
 
-      if(stats.size < 26214400){  
-        /**
-         * small file
-         * less than 25mb
-         */
-        zip.on('ready', () => {
-          let first = null;
-          for (const entry of Object.values(zip.entries())) {
-            if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
-              first = entry;
-              break;
-            }
-          }
-
-          preview = zip.entryDataSync(first.name);
-          resolve(resize_preview(preview))
+      zip.on('entry', entry => {
+        if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) === true){
+          preview = zip.entryDataSync(entry.name);
+          resolve(resize_preview(preview));
           zip.close();
-        });
-      }else{  
-        /**
-         * big file
-         * more or equal than 25mb
-         */
-        zip.on('entry', entry => {
-          if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
-            preview = zip.entryDataSync(entry.name);
-            resolve(resize_preview(preview));
-            zip.close();
-          }
-        });
+        }
+      });
+
+      // if(stats.size < 26214400){  
+      //   /**
+      //    * small file
+      //    * less than 25mb
+      //    */
+      //   zip.on('ready', () => {
+      //     let first = null;
+      //     for (const entry of Object.values(zip.entries())) {
+      //       if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
+      //         first = entry;
+      //         preview = zip.entryDataSync(first.name);
+      //         resolve(resize_preview(preview))
+      //         zip.close();
+      //         break;
+      //       }
+      //     }
+      //   });
+      // }else{  
+      //   /**
+      //    * big file
+      //    * more or equal than 25mb
+      //    */
+      //   zip.on('entry', entry => {
+      //     if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
+      //       preview = zip.entryDataSync(entry.name);
+      //       resolve(resize_preview(preview));
+      //       zip.close();
+      //     }
+      //   });
         
-        zip.close();
-      }
+      //   zip.close();
+      // }
 
       zip.on('error', err => { reject(err);});
     }catch(e){

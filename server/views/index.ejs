@@ -41,43 +41,47 @@
     
       <div class="album py-5 bg-light">
         <div class="container">
-          <div class="row">
+          <div class="row" id="books">
+          </div>
+        </div>
+      </div>
 
-            <% if(books != null && books.length > 0){ %>
-              <% books.forEach(function(book) { %>
-                <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
+
+      <script>
+        const socket = io('/index', {forceNew: true});
+
+        socket.on('connect', ()=>{
+          console.log('index');
+        })
+        
+        socket.on('index', raw => {
+          const data = raw.book;
+
+          let preview = data.type === 'txt' ? 
+          `<div class="preview-txt" data-holder-rendered="true" data-src="${data._id}">${data.preview}</div>` :
+          `<img class="preview-img" data-holder-rendered="true" src="${buf2img(data.preview)}" data-src="${data._id}">`;
+
+          let book = document.createElement('div');
+          book.classList = 'col-sm-6 col-md-4 col-lg-3 col-xl-3';
+          book.innerHTML = `
                   <div class="card mb-4 shadow-sm">
-
-                    <% if(book.type == 'txt'){ %>
-                      <div class="preview-txt" data-holder-rendered="true" data-src="<%= book._id %>"><%= book.preview %></div>
-                    <% }else{ %>
-                      <img class="preview-img" data-holder-rendered="true" src="data:image/png;base64,<%= book.preview %>" data-src="<%= book._id %>">
-                    <% } %>
-                    
+                    ${preview}              
                     <div class="card-body">
-                      <p class="card-text"><%= book.path %></p>
+                      <p class="card-text">${data.path}</p>
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                           <button type="button" class="btn btn-sm btn-outline-secondary">btn1</button>
                           <button type="button" class="btn btn-sm btn-outline-secondary">btn2</button>
                         </div>
-                        <small class="text-muted">created time</small>
+                        <small class="text-muted">${data.added}</small>
                       </div>
                     </div>
-                  </div>
-                </div>
-              <% }) %>
-            <% }else{ %>
-              <p class="text-muted">라이브러리 스캔 중입니다.</p>
-            <% } %>
+                  </div>  `;
+          
+          document.getElementById('books').appendChild(book);
+        });
 
-          </div>
-        </div>
-      </div>
 
-      <script>
-        const socket = io({forceNew: true});
-        
       </script>
 
     </main>

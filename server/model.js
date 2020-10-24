@@ -90,27 +90,22 @@ let __settings = {
 }
 
 let __library = {
-    put: (obj) => 
+    put: async (obj) => 
     {
         try
         {
-            db_library.get(obj.path).catch( async (err) =>
-            {
-                if(err.name === 'not_found')
-                {
-                    obj._id = obj.path;
-                    await db_library.put(obj);
-        
-                    console.debug(`[DEBUG] new book added: ${obj.path}`.gray)
-                }
-            }).then(()=>{
-                console.debug(`[DEBUG] ${obj.path} is already in your db.`.gray);
-            })
+            obj._id = obj.path;
+            await db_library.put(obj);
+            console.debug(`[DEBUG] new book added: ${obj.path}`.gray)
         }
         catch(e)
         {
-            console.error(e);
-            console.trace();
+            if(e.name === 'conflict'){
+                console.error(`${obj.path} is duplicated. @model.library.put`);
+            }else{
+                console.error(e);
+                console.trace();
+            }
         }
     },
 
@@ -141,7 +136,24 @@ let __library = {
 
     delete: (_id) => {
 
-    }
+    },
+
+    isDuplicate: (path) => {
+        return new Promise((resolve, reject) => {
+            let id = path;
+            db_library.get(id).catch(e=>{
+                console.log(e);
+                console.log('@model.library.isDuplicate')
+                if(e.name === 'not_found'){
+                    resolve(false);
+                }
+            }).then(doc => {
+                resolve(true);
+            })
+        })
+    },
+
+    library: db_library
 }
 
 

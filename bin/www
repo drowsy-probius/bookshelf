@@ -18,7 +18,9 @@ const path = require('path');
 const fileprocess = require('../server/fileprocess');
 const basedir = process.env.DIR || path.resolve("./books");
 
-fileprocess.init(basedir);
+//fileprocess.init(basedir);
+fileprocess.init('/mnt/gdrive/E-books/만화/바라카몬');
+
 
 /**
  * Module dependencies.

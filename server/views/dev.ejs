@@ -15,10 +15,7 @@
     })
 
     socket.on('pic', data => {
-      // https://gist.github.com/candycode/f18ae1767b2b0aba568e
-      const urlCreator = window.URL || window.webkitURL;
-      const pic = urlCreator.createObjectURL( new Blob([data.preview], { type: 'image/png' }) );
-
+      const pic = buf2img(data.pic)
       let img = document.createElement('img');
       img.src = pic
       img.dataset.idx = data.idx;

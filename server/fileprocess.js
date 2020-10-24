@@ -18,6 +18,32 @@ const fileHandler = require('./filehandler/main');
 
 /*********** inner funcitons *************/
 
+const is_book_folder = async (target) => {
+  const _folder = await fs.promises.readdir(target, {withFileTypes:true});
+  let isBook = true;
+  
+
+  for(let i=0; i<_folder.length; i++){
+    const _file = _folder[i];
+
+    if(_file.isDirectory())
+    {
+      isBook = false;
+      break;
+    }
+    else if(_file.isFile())
+    {
+      const ext = _file.name.split('.').pop();
+      if( ['jpg', 'png', 'gif'].includes(ext) === false )
+      {
+        isBook = false;
+        break;
+      }
+    }
+  }
+  return isBook;
+}
+
 const __scanDirectory = async (dir) => 
 {
   try
@@ -29,36 +55,20 @@ const __scanDirectory = async (dir) =>
       const file = files[i];
       const target = path.join(dir, file.name);
 
-      if(file.isDirectory())
+      if(file.isDirectory() === true)
       {
         /**
          * IF all files in a directory is picture, 
          * THEN consider it as a book.
          * ELSE recursive scan on the directory.
          */
-        const _folder = await fs.promises.readdir(target, {withFileTypes:true});
-        let isBook = true;
-        
-        for(let j=0; j<_folder.length; j++){
-          const _file = _folder[j];
-          if(_file.isDirectory())
-          {
-            isBook = false;
-            break;
-          }
-          else if(_file.isFile())
-          {
-            const ext = _file.name.split('.').pop();
-            if( !['jpg', 'png', 'gif'].includes(ext) )
-            {
-              isBook = false;
-              break;
-            }
-          }
-        }
-        
-        if(isBook)
+        if(is_book_folder(target) === true)
         {
+          if( model.library.isDuplicate(target) === true ){
+            console.debug(`${target} is already in db.`);
+            continue;
+          }
+
           let _preview = await fileHandler.preview.folder(target);
           let book = new model.book();
 
@@ -78,23 +88,36 @@ const __scanDirectory = async (dir) =>
         }
 
       }
-      else if(file.isFile())
+      else if(file.isFile() === true)
       {
         /**
          * IF it is a file,
          * THEN it would be one of zip, txt, pdf, epub, ...
          */
-        let typeinfo = await fileHandler.filetype(target);
-
-        if( ['jpg', 'png', 'gif'].includes(typeinfo.ext) )
-        {
+        if( await model.library.isDuplicate(target) === true ){
+          console.log(`${target} is already in db.`);
           continue;
         }
 
-        let _preview = await fileHandler.preview[typeinfo.ext](target);
+        //let typeinfo = await fileHandler.filetype(target);
+        let ext = target.split('.').pop();
+        if(ext === 'zip' || ext === 'cbz'){
+          ext = 'zip';
+        }else if(ext === 'pdf'){
+          ext = 'pdf';
+        }else if(ext === 'txt'){
+          ext = 'txt';
+        }else if(ext === 'epub'){
+          ext = 'pdf';
+        }else{
+          console.debug(`not supported file: ${target}`);
+          continue;
+        }
+
+        let _preview = await fileHandler.preview[ext](target);
         let book = new model.book();
 
-        book.type = typeinfo.ext;
+        book.type = ext;
         book.path = target;
         book.parent = dir.split('/').pop();
         book.added = new Date().getTime();

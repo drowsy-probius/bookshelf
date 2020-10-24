@@ -5,6 +5,37 @@
   </head>
   <body>
     <% include ./common/header %>
+    <style>
+      @media screen and (max-width: 575px) { /* the smallest size */
+        .preview-img {
+          width: 100%;
+          display: inline-block;
+          background-color: lightgray;
+        }
+      }
+
+      @media screen and (min-width: 576px) {
+        .preview-img {
+          width: 100%;
+          display: inline-block;
+          background-color: lightgray;
+        }
+      }
+
+      .preview-txt {
+        height: 150px;
+        width: 100%;
+        display: inline-block;
+        text-indent: 25px;
+        background-color: lightgray;
+        font: -webkit-control;
+        white-space: break-spaces;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+
+    </style>
     <main>
     
       <div class="album py-5 bg-light">
@@ -15,7 +46,13 @@
               <% books.forEach(function(book) { %>
                 <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
                   <div class="card mb-4 shadow-sm">
-                    <img class="card-img-to" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="<%= book._id %>" style="height: 225px; width: 100%; display: block;" src="#" data-holder-rendered="true">
+
+                    <% if(book.type == 'txt'){ %>
+                      <div class="preview-txt" data-holder-rendered="true" data-src="<%= book._id %>"><%= book.preview %></div>
+                    <% }else{ %>
+                      <img class="preview-img" data-holder-rendered="true" src="data:image/png;base64,<%= book.preview %>" data-src="<%= book._id %>">
+                    <% } %>
+                    
                     <div class="card-body">
                       <p class="card-text"><%= book.path %></p>
                       <div class="d-flex justify-content-between align-items-center">

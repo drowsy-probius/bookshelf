@@ -42,7 +42,7 @@ let __user = class {
 let __book = class {
     constructor(){
         this._id = ''
-        this.type = '';  //txt, pdf, cbz, folder, ...
+        this.type = '';  // zip, txt, pdf, epub, folder, ...
         this.path = '';
         this.parent = '';
         this.added = '';  // Date

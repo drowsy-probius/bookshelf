@@ -1,4 +1,6 @@
-/********************** modules **************************/
+/**
+ * ./server/filehandler/main.js 
+ */
 
 // common
 const fs = require('fs');
@@ -21,7 +23,7 @@ const StreamZip = require('node-stream-zip');
 
 // image processing
 const sharp = require('sharp');
-//const { resolve } = require('path');
+const { resolve } = require('path');
 
 
 /******************** functions *************************/
@@ -75,9 +77,9 @@ const resize_preview = (buffer) => {
     const image = sharp(buffer);
     image.metadata((err, metadata) => {
       if(metadata.width > metadata.height){
-        resolve( image.resize({height: 141}).png().toBuffer() );
+        resolve( image.resize({height: 283}).png().toBuffer() );
       }else{
-        resolve( image.resize({width: 100}).png().toBuffer() );
+        resolve( image.resize({width: 200}).png().toBuffer() );
       }
     })
   })
@@ -160,7 +162,9 @@ const __preview_zip = (file) => {
 }
 
 const __preview_pdf = (file) => {
-
+  return new Promise(async (resolve, reject) => {
+    resolve('aaaa');
+  })
 }
 
 const __preview_folder = (folder) => {

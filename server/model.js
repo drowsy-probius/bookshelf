@@ -1,10 +1,10 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
-const __colors = require('colors');
+const {} = require('colors');
 
 const db_settings = new PouchDB(path.join(__dirname, 'db/settings'));
-const db_library = new PouchDB(path.join(__dirname, 'db/libarary'));
+const db_library = new PouchDB(path.join(__dirname, 'db/library'));
 
 
 /*************** inner functions *********************/
@@ -90,14 +90,25 @@ let __settings = {
 }
 
 let __library = {
-    put: async (obj) => {
-        try{
-            obj._id = `${obj.path}8^8${new Date().getTime()}`
-            await db_library.put(obj);
-
-            console.log(`message from 'library.put @model.js'`)
-            console.log(`[DEBUG] new book added! \n${obj.toString()}`.gray)
-        }catch(e){
+    put: (obj) => 
+    {
+        try
+        {
+            db_library.get(obj.path).catch( async (err) =>
+            {
+                if(err.name === 'not_found')
+                {
+                    obj._id = obj.path;
+                    await db_library.put(obj);
+        
+                    console.debug(`[DEBUG] new book added: ${obj.path}`.gray)
+                }
+            }).then(()=>{
+                console.debug(`[DEBUG] ${obj.path} is already in your db.`.gray);
+            })
+        }
+        catch(e)
+        {
             console.error(e);
             console.trace();
         }

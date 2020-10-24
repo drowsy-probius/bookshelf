@@ -6,13 +6,25 @@
   <body>
     dev page
     <div id='content'>
-
     </div>
   </body>
   <script>
-    const socket = io({forceNew: true});
-    socket.on('connect', function(){socket.emit('eventName', 'message')});
-    socket.on('event', function(data){});
-    socket.on('disconnect', function(){});
+    const socket = io('/dev', {forceNew: true});
+    socket.on('connect', ()=>{
+      console.log('dev');
+    })
+
+    socket.on('pic', data => {
+      // https://gist.github.com/candycode/f18ae1767b2b0aba568e
+      const urlCreator = window.URL || window.webkitURL;
+      const pic = urlCreator.createObjectURL( new Blob([data.preview], { type: 'image/png' }) );
+
+      let img = document.createElement('img');
+      img.src = pic
+      img.dataset.idx = data.idx;
+
+      document.getElementById('content').appendChild(img);
+    })
+
   </script>
 </html>

@@ -1,7 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * Library Processing
+ * Delete DB LOCK files
+ */
+
+const fs = require('fs');
+['library', 'settings'].forEach((db) => {
+  fs.unlink(__dirname + `/../server/db/${db}`, (err) => { });
+});
+
+
+/**
+ * Library Scanning
  */
 
 const path = require('path');
@@ -31,7 +41,8 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
-socket( require('socket.io')(server) );
+const socketOptions = {pingInterval: 25000, maxHttpBufferSize: 1e5};
+socket( require('socket.io')(server, socketOptions) );
 
 /**
  * Listen on provided port, on all network interfaces.

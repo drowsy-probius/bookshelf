@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "start:dev": "rm -r ./server/db/* && nodemon ./bin/www"
+    "start:dev": "nodemon ./bin/www"
   },
   "dependencies": {
     "chardet": "^1.3.0",

@@ -19,7 +19,6 @@ module.exports.index = async (req, res, next) => {
                 }
             }
 
-            console.log(books);
             res.render('index', { title: 'Express' , books: books, logined: req.session.login });
         }catch(e){
             console.error(e);

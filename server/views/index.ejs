@@ -6,20 +6,18 @@
   <body>
     <% include ./common/header %>
     <style>
-      @media screen and (max-width: 575px) { /* the smallest size */
-        .preview-img {
-          width: 100%;
-          display: inline-block;
-          background-color: lightgray;
+      @media (min-width: 1200px){
+        .col-xl-2 {
+            -ms-flex: 0 0 20%;
+            flex: 0 0 20%;
+            max-width: 20%;
         }
       }
 
-      @media screen and (min-width: 576px) {
-        .preview-img {
-          width: 100%;
-          display: inline-block;
-          background-color: lightgray;
-        }
+      .preview-img {
+        width: 100%;
+        display: inline-block;
+        background-color: lightgray;
       }
 
       .preview-txt {
@@ -34,7 +32,14 @@
         text-overflow: ellipsis;
       }
 
+      .book {
+        display: flex;
+        flex-direction: column;
+      }
 
+      .date {
+        font-size: 70%!important;
+      }
     </style>
 
     <main>
@@ -49,39 +54,59 @@
 
       <script>
         const socket = io('/index', {forceNew: true});
-
-        socket.on('connect', ()=>{
-          console.log('index');
-        })
+        let __request = null;
         
         socket.on('index', raw => {
-          const data = raw.book;
+          const book = raw.book;
+          console.debug('new book: ' + book.path);
 
-          let preview = data.type === 'txt' ? 
-          `<div class="preview-txt" data-holder-rendered="true" data-src="${data._id}">${data.preview}</div>` :
-          `<img class="preview-img" data-holder-rendered="true" src="${buf2img(data.preview)}" data-src="${data._id}">`;
+          let preview = book.type === 'txt' ? 
+          `<div class="preview-txt reader" data-holder-rendered="true" data-id="${book._id}">${book.preview}</div>` :
+          `<img class="preview-img reader" data-holder-rendered="true" src="${buf2img(book.preview)}" data-id="${book._id}">`;
 
-          let book = document.createElement('div');
-          book.classList = 'col-sm-6 col-md-4 col-lg-3 col-xl-3';
-          book.innerHTML = `
+          let entry = createElement('div', 'col-sm-6 col-md-4 col-lg-3 col-xl-2 book')
+          entry.innerHTML = `
                   <div class="card mb-4 shadow-sm">
                     ${preview}              
                     <div class="card-body">
-                      <p class="card-text">${data.path}</p>
+                      <p class="card-text reader" data-id="${book._id}">${book.title.title} - ${book.title.episode}</p>
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                          <button type="button" class="btn btn-sm btn-outline-secondary">btn1</button>
-                          <button type="button" class="btn btn-sm btn-outline-secondary">btn2</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary download" data-id="${book._id}">↓</button>
                         </div>
-                        <small class="text-muted">${data.added}</small>
+                        <small class="text-muted date" name="added">${new Date(book.added).toLocaleString('ko-KR')}</small>
                       </div>
                     </div>
                   </div>  `;
           
-          document.getElementById('books').appendChild(book);
+          
+          document.getElementById('books').appendChild(entry);
+
+          socket.emit('received', {book: book._id});
         });
+        
 
-
+        $(document).ready(function(){
+          /**
+           * 화살표 함수로 쓰면 this의 범위가 전체 document로 바뀜
+           * 그러면 data-id를 불러올 수 없음.
+           */
+          $("body").on('click', '.reader', function(event){
+            event.preventDefault();
+            const id = $(this).data('id');
+            const win = window.open(`/reader/${id}`, '_blank');
+            win.focus();
+            console.log(`open reader ${id}`);
+          });
+          
+          $('body').on('click', '.download', function(event){
+            event.preventDefault();
+            const id = $(this).data('id');
+            const win = window.open(`/reader/${id}/download`, '_blank');
+            win.focus();
+            console.debug(`donwload ${id}`);
+          });
+        });
       </script>
 
     </main>

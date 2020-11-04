@@ -12,8 +12,8 @@ pure way
 
 
 *.pdf, *.epub
-
-https://stackoverflow.com/questions/18680261/extract-images-from-pdf-file-with-javascript
+https://stackoverflow.com/questions/17784037/how-to-display-pdf-file-in-html
+https://stackoverflow.com/questions/18680261/extract-images-from-pdf-file-with-javascriptz
 
 pdf with angular
 https://www.npmjs.com/package/ng2-pdf-viewer
@@ -24,6 +24,7 @@ https://www.npmjs.com/package/angular-epub-viewer
 
 https://github.com/futurepress/epub.js/
 https://www.npmjs.com/package/epub
+https://www.npmjs.com/package/epub2
 
 
 pure: *.jpg, *.png
@@ -59,3 +60,8 @@ https://www.npmjs.com/package/poly-ebook-server
 ## socket.io
 https://socket.io/docs/server-api/#Flag-%E2%80%98binary%E2%80%99-1
 https://socket.io/docs/client-api/#socket-binary-value
+
+
+## Dependencies
+### pdf
+link[https://github.com/yakovmeister/pdf2image/blob/HEAD/docs/gm-installation.md]

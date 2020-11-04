@@ -17,16 +17,59 @@ const chardet = require('chardet');
 // zip, cbz
 const StreamZip = require('node-stream-zip');
 
-// epub, pdf
+//pdf
+const {pdf2png} = require('./pdf2png');
+
+// epub
 
 // folder with pics
+
+
+
+// folder to zip
+const archiver = require('archiver');
+const archive = archiver('zip', {
+  zlib: { level: 0 } // Sets the compression level.
+});
+
 
 // image processing
 const sharp = require('sharp');
 const { resolve } = require('path');
 
+const canvas = require('canvas');
+
 
 /******************** functions *************************/
+
+const __get_title = (target, isFolder=false) => {
+  let title = '';
+  let episode = 0;
+
+  let tmp = target.split('/').pop();
+  if( !isFolder ) tmp = tmp.split('.').slice(0, -1).join('');
+
+  tmp = tmp.replace(/\[.*\]|\(.*\)/g, '').trim();
+
+  let num = tmp.match(/\d+/);
+  if(num && num !== null && num !== undefined)
+  {
+    title = tmp.slice(0, num.index).trim();
+    episode = num[0];
+  }
+  else
+  {
+    episode = 0;
+    title = tmp;
+  }
+
+  if(title.length < 1)
+  {
+    return {title: target.split('/').pop(), episode: ``};
+  }
+
+  return {title: title, episode: episode}
+}
 
 const __filetype = (target) => {
   return new Promise(async (resolve, reject) => {
@@ -86,21 +129,105 @@ const resize_preview = (buffer) => {
 }
 
 
+const buf2txt = (buffer) => {
+  return new Promise(async (resolve, reject) => {
+    try
+    {
+      let encoding = await chardet.detect(buffer);
+      encoding = encoding_str_convert(encoding);
+      let data = iconvlite.decode(buffer, encoding);
+  
+      resolve(data);
+    }
+    catch(e)
+    {
+      reject(e);
+    }
+  })
+}
 
 
-/******** preview functions **************/
+
+/*********************** functions **************/
+const __get_one_txt = (target, idx) => {
+  return new Promise( async (resolve, reject) => {
+    try{
+      const buffer = await fs.promises.readFile(target);
+      let data = await buf2txt(buffer);
+      data = data.split(/\n\r|\n/);
+      resolve(data[idx]);
+    }catch(e){
+      reject(e);
+    }
+  })
+}
+
+const __get_one_zip = (target, idx) => {
+  return new Promise( (resolve, reject) => {
+    const zip = new StreamZip({
+      file: target,
+      storeEntries: true
+    });
+
+    zip.on('ready', async ()=>{
+      let files = Object.values(zip.entries());
+      files = files.sort((a, b) => {
+        return parseInt(a.name) - parseInt(b.name);
+      });
+
+      const pic = zip.entryDataSync(files[idx].name);
+
+      resolve(pic);
+
+      zip.close();
+    });
+
+    zip.on('error', err => { reject(err); });
+  })
+}
+
+const __get_one_folder = (target, idx) => {
+  return new Promise( async (resolve, reject) => {
+    let files = await fs.promises.readdir(target, {withFileTypes: true});
+    files = files.sort((a, b) => {
+      return parseInt(a.name) - parseInt(b.name);
+    });
+    let _idx = 0;
+    for(let i=0; i<files.length; i++){
+      const file = files[i];
+      if(file.isFile() === true)
+      {
+        if( ['jpg', 'png', 'gif'].includes( file.name.split('.').pop() ) )
+        {
+          if(_idx === idx){
+            resolve(await fs.promises.readFile(path.join(target, file.name)));
+          }
+          _idx++;
+        }
+      }
+    }
+  })
+}
+
+const __get_one_pdf = (target, idx) => {
+  return new Promise( async (resolve, reject) => {
+    const pdf = new pdf2png(target);
+    const pic = await pdf.getOne(idx);
+    resolve(pic);
+  })
+}
+
 const __preview_txt = (file) => {
   return new Promise( async (resolve, reject) => {
     try{
       await fs.promises.access(file); // check file exists
 
-      let buffer = await fs.promises.readFile(file);
-      let encoding = await chardet.detectFile(file);
-      encoding = encoding_str_convert(encoding);
-      let data = iconvlite.decode(buffer, encoding);
-      let preview = data.split(/\n\r|\n/).slice(0, 10).join('\n');
+      const buffer = await fs.promises.readFile(file);
+      let data = await buf2txt(buffer);
+      data = data.split(/\n\r|\n/)
+      let preview = data.slice(0, 10).join('\n');
 
-      resolve(preview);
+      resolve({preview: preview, pages: data.length});
     }catch(e){
       reject(e);
     }
@@ -120,13 +247,26 @@ const __preview_zip = (file) => {
         storeEntries: true
       });
 
-      zip.on('entry', entry => {
-        if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) === true){
-          preview = zip.entryDataSync(entry.name);
-          resolve(resize_preview(preview));
-          zip.close();
-        }
-      });
+      zip.on('ready', async () => {
+        let files = Object.values(zip.entries());
+        files = files.filter(k => ['jpg', 'gif', 'png'].includes(k.name.split('.').pop()) );
+        files = files.sort((a, b) => {
+          return parseInt(a.name) - parseInt(b.name);
+        });
+
+        const preview = await resize_preview( zip.entryDataSync(files[0].name) );
+        resolve({preview: preview, pages: files.length});
+        zip.close();
+        
+      })
+
+      // zip.on('entry', entry => {
+      //   if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) === true){
+      //     preview = zip.entryDataSync(entry.name);
+      //     resolve({preview: resize_preview(preview), pages: zip.entriesCount});
+      //     zip.close();
+      //   }
+      // });
 
       // if(stats.size < 26214400){  
       //   /**
@@ -170,31 +310,76 @@ const __preview_zip = (file) => {
 
 const __preview_pdf = (file) => {
   return new Promise(async (resolve, reject) => {
-    resolve('aaaa');
+    try
+    {
+      // const options = {
+      //   format: "png",
+      //   width: 200,
+      //   height: 283
+      // };
+
+      // const options = {
+      //   format: "png"
+      // };
+
+      // const convert = fromPath(file, options);
+      
+      // convert(1, true).then(preview => {
+      //   resolve( Buffer.from(preview.base64, 'base64') );
+      // });
+
+      const pdf = new pdf2png(file);
+      const pages = await pdf.getnumPages();
+      const preview = await resize_preview(await pdf.thumbnail());
+
+      resolve({preview: preview, pages: pages});
+      pdf.destroy();
+
+    }
+    catch(e)
+    {
+      console.debug(`[ERROR] ${file} cannot be processed. @/filehandler/main.js`.red);
+      reject(e);
+    }
+
   })
 }
 
 const __preview_folder = (folder) => {
   return new Promise(async (resolve, reject) => {
     try{
-      const files = await fs.promises.readdir(folder, {withFileTypes:true});
+      let files = await fs.promises.readdir(folder, {withFileTypes:true});
+      files = files.filter(k => ['jpg', 'gif', 'png'].includes(k.name.split('.').pop() ))
+      files = files.sort((a, b) => {
+        return parseInt(a.name) - parseInt(b.name);
+      });
 
-      for(let i=0; i<files.length; i++){
-        const file = files[i];
-        if(['jpg', 'png', 'gif'].includes(file.name.split('.').pop())){
-          
-          resolve(resize_preview(
-            await fs.promises.readFile(path.join(folder, file.name)
-                  )));
+      const preview = await resize_preview(await fs.promises.readFile(path.join(folder, files[0].name)));
+      resolve({preview: preview, pages: files.length});
 
-          break;
-        }
-      }
+
+      // for(let i=0; i<files.length; i++){
+
+
+      //   const file = files[i];
+      //   if(['jpg', 'png', 'gif'].includes(file.name.split('.').pop())){
+      //     const preview = await resize_preview(await fs.promises.readFile(path.join(folder, file.name)));
+      //     resolve({preview: preview, pages: files.length});
+
+      //     break;
+      //   }
+      // }
 
     }catch(e){
       reject(e);
     }
   })
+}
+
+const __send_folder_to_zip = (doc, res) => {
+  archive.pipe(res);
+  archive.directory(doc.path, false);
+  archive.finalize();
 }
 
 /***************** modules ****************************/
@@ -209,3 +394,18 @@ module.exports.preview = {
   pdf: __preview_pdf,
   folder: __preview_folder
 }
+
+module.exports.title = __get_title;
+
+module.exports.buffer = {
+  txt: buf2txt
+}
+
+module.exports.getOne = {
+  txt: __get_one_txt,
+  zip: __get_one_zip,
+  folder: __get_one_folder,
+  pdf: __get_one_pdf
+}
+
+module.exports.folder2zip = __send_folder_to_zip;

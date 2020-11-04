@@ -1,5 +1,43 @@
 #!/usr/bin/env node
 
+/***************** dependencies ********************/
+
+/**
+ * Library Scanning
+ */
+
+const path = require('path');
+const fileprocess = require('../server/fileprocess');
+const basedir = process.env.DIR || path.resolve("./books");
+
+
+
+
+
+
+/***************** dependencies ********************/
+
+
+
+/***************** functions ***********************/
+const __master_work = () => {
+/**
+ * Library Scanning
+ */
+  //fileprocess.init(basedir);
+  const books = ['/mnt/gdrive/E-books/만화/바라카몬', basedir, '/mnt/gdrive/E-books/pdf'];
+  //const books = [basedir, '/mnt/gdrive/E-books/pdf'];
+  console.log(books);
+  fileprocess.init(books);
+}
+
+const __slave_work = () => {
+  
+}
+
+/***************** functions ***********************/
+
+
 /**
  * Delete DB LOCK files
  */
@@ -11,15 +49,35 @@ const fs = require('fs');
 
 
 /**
- * Library Scanning
+ * Cluster Setting
  */
 
-const path = require('path');
-const fileprocess = require('../server/fileprocess');
-const basedir = process.env.DIR || path.resolve("./books");
+const cluster = require('cluster');
+const cpus = require('os').cpus().length;
 
-//fileprocess.init(basedir);
-fileprocess.init('/mnt/gdrive/E-books/만화/바라카몬');
+cluster.schedulingPolicy = cluster.SCHED_RR;
+if (cluster.isMaster)
+{
+  console.debug(`[DEBUG][MASTER] create ${cpus} cluster(s).`.dim);
+  for(let i=0; i<cpus; i++){
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.debug(`[DEBUG][MASTER] cluster ${worker.process.pid} died. re-create another one.`.dim);
+    cluster.fork();
+  })
+}
+else
+{
+  console.debug(`[DEBUG][SLAVE] running server at ${cluster.worker.process.pid}`);
+
+
+}
+
+
+
+
 
 
 /**
@@ -29,7 +87,6 @@ fileprocess.init('/mnt/gdrive/E-books/만화/바라카몬');
 const app = require('../server/app');
 const debug = require('debug')('bookshelf:server');
 const http = require('http');
-const {socket} = require('../server/controllers/socket');
 
 /**
  * Get port from environment and store in Express.
@@ -43,7 +100,12 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
-const socketOptions = {pingInterval: 25000, maxHttpBufferSize: 1e5};
+
+/**
+ * Create Socket connection.
+ */
+const {socket} = require('../server/controllers/socket');
+const socketOptions = {};
 socket( require('socket.io')(server, socketOptions) );
 
 /**

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -rf ./server/db/*
+DEBUG=bookshelf:* PORT=18000 yarn start:dev

@@ -9,12 +9,19 @@
     </div>
   </body>
   <script>
+    let start = new Date().getTime();
+    let elapsed = 0;
     const socket = io('/dev', {forceNew: true});
     socket.on('connect', ()=>{
-      console.log('dev');
+      console.log(`socket namespace: /dev`);
     })
 
     socket.on('pic', data => {
+      if(elapsed === 0){
+        elapsed = new Date().getTime() - start;
+        console.log(`image load elapsed time: ${elapsed}ms`);
+      }
+
       const pic = buf2img(data.pic)
       let img = document.createElement('img');
       img.src = pic

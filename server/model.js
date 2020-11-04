@@ -2,6 +2,7 @@ const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
 const {} = require('colors');
+const crypto = require('crypto');
 
 const db_settings = new PouchDB(path.join(__dirname, 'db/settings'));
 const db_library = new PouchDB(path.join(__dirname, 'db/library'));
@@ -43,9 +44,11 @@ let __book = class {
     constructor(){
         this._id = ''
         this.type = '';  // zip, txt, pdf, epub, folder, ...
+        this.title = '';
         this.path = '';
         this.parent = '';
         this.added = '';  // Date
+        this.pages = 0;
         this.last_seen_page = 0;
         this.preview = '';
         this.group = ''; // user _id
@@ -55,9 +58,11 @@ let __book = class {
         return `{
             _id: ${this._id},
             type: ${this.type},
+            title: ${this.title},
             path: ${this.path},
             parent: ${this.parent},
             added: ${this.added},
+            pages: ${this.pages},
             last_seen_page: ${this.last_seen_page},
             preview: ${this.preview},
             group: ${this.group}
@@ -65,8 +70,9 @@ let __book = class {
     }
 }
 
-
 let __settings = {
+    db: db_settings,
+
     put: async (obj) => {
         await db_settings.put(obj);
     },
@@ -90,20 +96,22 @@ let __settings = {
 }
 
 let __library = {
+    db: db_library,
+
     put: async (obj) => 
     {
         try
         {
-            obj._id = obj.path;
+            obj._id = obj.added + '.'+ crypto.createHash('md5').update(obj.path).digest('hex');
             await db_library.put(obj);
-            console.debug(`[DEBUG] new book added: ${obj.path}`.gray)
+            console.debug(`[DEBUG] new book added: ${obj.path} @/model.js`.gray)
         }
         catch(e)
         {
             if(e.name === 'conflict'){
-                console.error(`${obj.path} is duplicated. @model.library.put`);
+                console.error(`${obj.path} is duplicated. @model.library.put @/model.js`.magenta );
             }else{
-                console.error(e);
+                console.error(e.red);
                 console.trace();
             }
         }
@@ -129,7 +137,17 @@ let __library = {
         }
     },
 
-    get: ({key, value}) => {
+    get: (_id) => {
+        return new Promise((resolve, reject) => {
+            db_library.get(_id).then(doc => {
+                resolve(doc);
+            }).catch(e => {
+                reject(e);
+            })
+        })
+    },
+
+    get_by_value: ({key, value}) => {
         // queries
         // https://pouchdb.com/guides/mango-queries.html
     },
@@ -142,8 +160,6 @@ let __library = {
         return new Promise((resolve, reject) => {
             let id = path;
             db_library.get(id).catch(e=>{
-                console.log(e);
-                console.log('@model.library.isDuplicate')
                 if(e.name === 'not_found'){
                     resolve(false);
                 }

@@ -18,124 +18,135 @@ const fileHandler = require('./filehandler/main');
 
 /*********** inner funcitons *************/
 
-const is_book_folder = async (target) => {
-  const _folder = await fs.promises.readdir(target, {withFileTypes:true});
-  let isBook = true;
+const is_book_folder = (target) => {
+  return new Promise( async (resolve, reject) => {
+    const _folder = await fs.promises.readdir(target, {withFileTypes:true});
+    for(let i=0; i<_folder.length; i++){
+      const _file = _folder[i];
   
-
-  for(let i=0; i<_folder.length; i++){
-    const _file = _folder[i];
-
-    if(_file.isDirectory())
-    {
-      isBook = false;
-      break;
-    }
-    else if(_file.isFile())
-    {
-      const ext = _file.name.split('.').pop();
-      if( ['jpg', 'png', 'gif'].includes(ext) === false )
+      if(_file.isDirectory())
       {
-        isBook = false;
-        break;
+        resolve(false);
+      }
+      else if(_file.isFile())
+      {
+        const ext = _file.name.split('.').pop();
+        if( ['jpg', 'png', 'gif'].includes(ext) === false )
+        {
+          resolve(false);
+        }
       }
     }
-  }
-  return isBook;
+    resolve(true);
+  })
 }
 
-const __scanDirectory = async (dir) => 
+
+/**
+ * @param {Array of Strings} dirs 
+ */
+const __scanDirectory = (dirs) => 
 {
   try
   {
-    const files = await fs.promises.readdir(dir, {withFileTypes:true});
+    dirs.forEach(async dir => {
+      const files = await fs.promises.readdir(dir, {withFileTypes:true});
 
-    for(let i=0; i<files.length; i++)
-    {
-      const file = files[i];
-      const target = path.join(dir, file.name);
-
-      if(file.isDirectory() === true)
+      for(let i=0; i<files.length; i++)
       {
-        /**
-         * IF all files in a directory is picture, 
-         * THEN consider it as a book.
-         * ELSE recursive scan on the directory.
-         */
-        if(is_book_folder(target) === true)
+        const file = files[i];
+        const target = path.join(dir, file.name);
+
+        if(file.isDirectory() === true)
         {
-          if( model.library.isDuplicate(target) === true ){
-            console.debug(`${target} is already in db.`);
+          /**
+           * IF all files in a directory is picture, 
+           * THEN consider it as a book.
+           * ELSE recursive scan on the directory.
+           */
+          let folders = [];
+
+          if( ( await is_book_folder(target) ) === true)
+          {
+            if( model.library.isDuplicate(target) === true ){
+              console.debug(`${target} is already in db. @/fileprocess.js`.gray);
+              continue;
+            }
+
+            const info = await fileHandler.preview.folder(target);
+            let book = new model.book();
+
+            book.type = 'folder';
+            book.title = fileHandler.title(target, true);
+            book.path = target;
+            book.parent = dir.split('/').pop();
+            book.added = new Date().getTime();
+            book.last_seen_page = 0;
+            book.pages = info.pages;
+            book.preview = info.preview;
+            book.group = '*';
+
+            model.library.put(book);
+          }
+          else
+          {
+            folders.push(target);
+          }
+
+          __scanDirectory(folders);
+
+        }
+        else if(file.isFile() === true)
+        {
+          /**
+           * IF it is a file,
+           * THEN it would be one of zip, txt, pdf, epub, ...
+           */
+          if( await model.library.isDuplicate(target) === true ){
+            console.debug(`[DEBUG] ${target} is already in db. @/fileprocess.js`.gray);
             continue;
           }
 
-          let _preview = await fileHandler.preview.folder(target);
+          //let typeinfo = await fileHandler.filetype(target);
+          let ext = target.split('.').pop();
+          if(ext === 'zip' || ext === 'cbz'){
+            ext = 'zip';
+          }else if(ext === 'pdf'){
+            ext = 'pdf';
+          }else if(ext === 'txt'){
+            ext = 'txt';
+          }else if(ext === 'epub'){
+            ext = 'pdf';
+          }else{
+            console.debug(`[DEBUG] not a book: ${target} @/fileprocess.js`.gray);
+            continue;
+          }
+
+          const info = await fileHandler.preview[ext](target);
           let book = new model.book();
 
-          book.type = 'folder';
+          book.type = ext;
+          book.title = fileHandler.title(target, false);
           book.path = target;
           book.parent = dir.split('/').pop();
           book.added = new Date().getTime();
           book.last_seen_page = 0;
-          book.preview = _preview;
+          book.pages = info.pages;
+          book.preview = info.preview;
           book.group = '*';
 
           model.library.put(book);
         }
         else
         {
-          __scanDirectory(target);
+          /**
+           * neither folder nor file
+           * pass
+           */
         }
 
       }
-      else if(file.isFile() === true)
-      {
-        /**
-         * IF it is a file,
-         * THEN it would be one of zip, txt, pdf, epub, ...
-         */
-        if( await model.library.isDuplicate(target) === true ){
-          console.log(`${target} is already in db.`);
-          continue;
-        }
-
-        //let typeinfo = await fileHandler.filetype(target);
-        let ext = target.split('.').pop();
-        if(ext === 'zip' || ext === 'cbz'){
-          ext = 'zip';
-        }else if(ext === 'pdf'){
-          ext = 'pdf';
-        }else if(ext === 'txt'){
-          ext = 'txt';
-        }else if(ext === 'epub'){
-          ext = 'pdf';
-        }else{
-          console.debug(`not supported file: ${target}`);
-          continue;
-        }
-
-        let _preview = await fileHandler.preview[ext](target);
-        let book = new model.book();
-
-        book.type = ext;
-        book.path = target;
-        book.parent = dir.split('/').pop();
-        book.added = new Date().getTime();
-        book.last_seen_page = 0;
-        book.preview = _preview;
-        book.group = '*';
-
-        model.library.put(book);
-      }
-      else
-      {
-        /**
-         * neither folder nor file
-         * pass
-         */
-      }
-
-    }
+    });
   }
   catch(e)
   {

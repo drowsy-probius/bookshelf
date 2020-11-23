@@ -13,6 +13,8 @@ const path = require("path");
 const model = require("./model");
 const fileHandler = require('./filehandler/main');
 
+const console = require('./log');
+
 
 
 
@@ -69,15 +71,17 @@ const __scanDirectory = (dirs) =>
           if( ( await is_book_folder(target) ) === true)
           {
             if( model.library.isDuplicate(target) === true ){
-              console.debug(`${target} is already in db. @/fileprocess.js`.gray);
+              console.file([`${target} is already in db.`], '/fileprocess.js');
               continue;
             }
-
+            
+            console.file([`found a new book: ${target}`], '/fileprocess.js');
             const info = await fileHandler.preview.folder(target);
             let book = new model.book();
 
             book.type = 'folder';
             book.title = fileHandler.title(target, true);
+            book.tags = fileHandler.tagsFromFilename(target.split('/').pop());
             book.path = target;
             book.parent = dir.split('/').pop();
             book.added = new Date().getTime();
@@ -103,7 +107,7 @@ const __scanDirectory = (dirs) =>
            * THEN it would be one of zip, txt, pdf, epub, ...
            */
           if( await model.library.isDuplicate(target) === true ){
-            console.debug(`[DEBUG] ${target} is already in db. @/fileprocess.js`.gray);
+            console.file([`${target} is already in db.`], '/fileprocess.js');
             continue;
           }
 
@@ -118,15 +122,17 @@ const __scanDirectory = (dirs) =>
           }else if(ext === 'epub'){
             ext = 'pdf';
           }else{
-            console.debug(`[DEBUG] not a book: ${target} @/fileprocess.js`.gray);
+            console.file([`not a book: ${target}`], '/fileprocess.js');
             continue;
           }
 
+          console.file([`found a new book: ${target}`], '/fileprocess.js');
           const info = await fileHandler.preview[ext](target);
           let book = new model.book();
 
           book.type = ext;
           book.title = fileHandler.title(target, false);
+          book.tags = fileHandler.tagsFromFilename(target.split('/').pop());
           book.path = target;
           book.parent = dir.split('/').pop();
           book.added = new Date().getTime();

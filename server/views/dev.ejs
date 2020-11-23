@@ -3,32 +3,557 @@
   <head>
     <% include ./common/head %>
   </head>
+
   <body>
-    dev page
+
+    <div id="header_nav" class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <div class="title">title here</div>
+        <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button> -->
+      </div>
+    </div>
+
+    <div id="btn_float">
+      <button class="arrow_left float">
+        <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+        </svg>
+      </button>
+      <button class="arrow_right float">
+        <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+    </div>
+
     <div id='content'>
     </div>
-  </body>
-  <script>
-    let start = new Date().getTime();
-    let elapsed = 0;
-    const socket = io('/dev', {forceNew: true});
-    socket.on('connect', ()=>{
-      console.log(`socket namespace: /dev`);
-    })
+    
 
-    socket.on('pic', data => {
-      if(elapsed === 0){
-        elapsed = new Date().getTime() - start;
-        console.log(`image load elapsed time: ${elapsed}ms`);
+    <div id="footer_nav" class="navbar navbar-bottom navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <div class="btn-group dropup">
+          <button class="preferences" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
+              <path fill-rule="evenodd" d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
+            </svg>
+          </button>
+          <div class="dropdown-menu" id="dropdown_menu">
+            <!-- Dropdown menu links -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </body>
+  <!-- <script src="/js/dev.js"></script> -->
+  <style>
+
+    body {
+      z-index: -1;
+      transition: background-color 0.3s cubic-bezier(1, 1, 1, 1);
+      -webkit-transition:background-color 0.3s cubic-bezier(1, 1, 1, 1);
+	    transition-delay: 0s;
+      background-color: rgb(247, 239, 218);
+    }
+
+    img{
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 85%;
+
+      -webkit-transition-duration:0.3s;
+      -webkit-transition-timing-function: ease;
+      transition-duration:0.3s;
+      transition-timing-function: ease;
+    }
+
+    button {
+      background-color: Transparent;
+      background-repeat:no-repeat;
+      border: none;
+      cursor:pointer;
+      overflow: hidden;
+      outline:none!important;
+    }
+
+    .navbar {
+      z-index: 10;
+      color: rgb(44, 32, 0);
+      background-color: rgba(255, 255, 255, 0.5)!important;
+      position: fixed!important;
+      width: 100vw;
+      height: 2.5em;
+      outline: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-bottom{
+      display: block;
+      bottom: 0;
+      left: 0;
+      height: 3em;
+    }
+
+    .float{
+      z-index: 20;
+      background-color: rgba(255, 255, 255, 0.1)!important;
+    }
+
+    .arrow_left{
+      position: fixed;
+      top: 50%;
+      left: 0;
+    }
+
+    .arrow_right{
+      position: fixed;
+      top: 50%;
+      right: 0;
+    }
+
+    .hide{
+      display: none!important;
+    }
+
+    #story_header{
+      display: block;
+    }
+
+    #content{
+      z-index: 0;
+      box-sizing: border-box;
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+
+  </style>
+
+  <script>
+/******************** constants ********************/
+
+const __btn_book_scroll = `
+<button class="file_image" onclick="change_view_mode(0)">
+  <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-file-image-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v8.293l-2.73-2.73a1 1 0 0 0-1.52.127l-1.889 2.644-1.769-1.062a1 1 0 0 0-1.222.15L2 12.292V2a2 2 0 0 1 2-2zm6.564 8.27L14 11.708V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-.293l3.578-3.577 2.165 1.299.396.237.268-.375 2.157-3.02zM8.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+  </svg>
+  스크롤 보기
+</button>
+`
+
+const __btn_book_half = `
+<button class="book_half" onclick="change_view_mode(1)">
+  <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-book-half" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M8.5 2.687v9.746c.935-.53 2.12-.603 3.213-.493 1.18.12 2.37.461 3.287.811V2.828c-.885-.37-2.154-.769-3.388-.893-1.33-.134-2.458.063-3.112.752zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+  </svg>
+  1쪽씩 보기
+</button>
+`
+
+const __btn_book_full = `
+<button class="book_full" onclick="change_view_mode(2)">
+  <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-book-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+  </svg>
+  2쪽씩 보기
+</button>
+`
+
+const __btn_arrow_left = `
+<button class="arrow_left float">
+  <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+  </svg>
+</button>
+`
+
+const __btn_arrow_right = `
+<button class="arrow_right float">
+  <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+  </svg>
+</button>
+`
+
+const __dropdown_divider = `
+  <div class="dropdown-divider"></div>
+`
+
+const __btn_view = {
+  0: __btn_book_scroll,
+  1: __btn_book_half,
+  2: __btn_book_full
+}
+/************************************************************/
+
+$('.arrow_left').click( () => {
+  if(last_seen.current_page > 0)
+  {
+    last_seen.current_page -= 1;
+    render_img(last_seen.current_page);
+  }
+  console.log(last_seen)
+});
+
+$('.arrow_right').click( () => {
+  if(last_seen.current_page < last_seen.total_page - 1 )
+  {
+    last_seen.current_page += 1;
+    render_img(last_seen.current_page);
+  }
+  console.log(last_seen)
+});
+
+
+/************************************************************/
+let last_seen = {
+  current_page: 0,
+  total_page: 0
+}
+let current_view_mode = 0;
+
+
+const render_img = page => {
+  document.querySelectorAll('#content > img').forEach(i => i.style = '' );
+  document.querySelectorAll('#content > img').forEach(i => $(i).css('display', 'none'));
+
+  const current_page = document.querySelector(`[data-idx="${page}"]`);
+  let width = current_page.width;
+  let height = current_page.height;
+  let ratio = 1;
+
+  const image_ratio = height / width;
+  const window_ratio = __height / __width;
+
+  $(current_page).css('width', 'auto');
+  $(current_page).css('max-height', '100%');
+
+  // if(image_ratio > 1)
+  // {
+  //   $(current_page).css('max-width', '100%');
+  //   $(current_page).css('width', 'auto');
+  //   $(current_page).css('height', '100%');
+  // }
+  // else
+  // {
+  //   // TODO: 가로가 긴 이미지 윈도우에 맞추기
+  //   $(current_page).css('max-height', '100%');
+  //   $(current_page).css('width', '100%');
+  //   $(current_page).css('height', 'auto');
+  // }
+
+  $(current_page).css('display', '');
+  $(current_page).css('position', 'absolute');
+  $(current_page).css('margin', 'auto');
+  $(current_page).css('top', '0');
+  $(current_page).css('left', '0');
+  $(current_page).css('right', '0');
+  $(current_page).css('bottom', '0');
+}
+
+
+/**
+ * View Mode
+ * 
+ * 0: webtoon view (scroll)
+ * 1: one page view
+ * 2: two pages view (for height/width > 1 images)
+ * 3: full screen view
+ */
+const change_view_mode = view_mode => {
+  current_view_mode = view_mode;
+  /**
+   *  set drop-up menu 
+   */
+  const _length = Object.keys(__btn_view).length;
+  const dropdown_menu = document.getElementById('dropdown_menu');
+  dropdown_menu.innerHTML = '';
+  for(let i=0, divider=0; i<_length; i++)
+  {
+    if(i === view_mode)
+    {
+      continue;
+    }
+    dropdown_menu.insertAdjacentHTML('beforeend', __btn_view[i]);
+    if(divider < _length - 2)
+    {
+      divider++;
+      dropdown_menu.insertAdjacentHTML('beforeend', __dropdown_divider);
+    }
+  }
+
+  /**
+   *   change view mode
+   */
+  const content = document.getElementById('content');
+  const header = document.getElementById('header_nav');
+  const footer = document.getElementById('footer_nav');
+
+  if(view_mode === 0)
+  {
+    document.body.style.backgroundColor = 'rgb(247, 239, 218)';
+    
+    // content.innerHTML = '';
+
+    // for(let i=0; i<raw_contents.length; i++)
+    // {
+    //   let blob = buf2img(raw_contents[i]);
+    //   let img = createElement('img', 'img');
+    //   img.src = blob;
+    //   img.dataset.idx = i;
+    //   content.appendChild(img);
+    // }
+
+
+    const contents = document.getElementById('content').children;
+    for(let i=0; i<contents.length; i++)
+    {
+      $(contents[i]).removeAttr('style');
+    }
+
+
+    let current_pic = document.querySelector(`[data-idx="${last_seen.current_page}"]`);
+    let offset = 0;
+    if(current_pic === null || current_pic === undefined)
+    {
+      offset = 0;
+    }
+    else
+    {
+      offset = $(current_pic).offset().top;
+    }
+    window.scrollTo(0, offset);
+
+    $('#btn_float').hide();
+  }
+  else if(view_mode === 1)
+  {
+    document.body.style.backgroundColor = 'rgb(33, 32, 30)';
+
+    render_img(last_seen.current_page);
+
+    $('#btn_float').show();
+  }
+  else if(view_mode === 2)
+  {
+    document.body.style.backgroundColor = 'rgb(33, 32, 30)';
+
+    const images = document.querySelectorAll('#content > img');
+    images.forEach(i => {i.style = ''; i.style.display = 'none'; });
+
+    const current_page = document.querySelector(`[data-idx="${last_seen.current_page}"]`);
+    if(current_page.width > current_page.height)
+    {
+
+    }
+    else
+    {
+      /**
+       * 짝수개
+       * (0, 1), (2, 3), (4, 5)
+       * 홀수개
+       * (1, 2), (3, 4), ...
+       */
+      let sibling_idx = -1;
+      let evenStart = true;
+      for(let i=0; i<last_seen.current_page; i++)
+      {
+        if(images[i].width > images[i].height)
+        {
+          evenStart = !evenStart;
+        }
       }
 
-      const pic = buf2img(data.pic)
-      let img = document.createElement('img');
-      img.src = pic
-      img.dataset.idx = data.idx;
+      if(evenStart)
+      {
+        if(last_seen.current_page%2)
+          sibling_idx = last_seen.current_page - 1;
+        else
+          if(last_seen.current_page < last_seen.total_page)
+            sibling_idx = last_seen.current_page + 1    
+      }
+      else
+      {
+        if(last_seen.current_page%2)
+          if(last_seen.current_page < last_seen.total_page) sibling_idx = last_seen.current_page + 1;
+        else
+          sibling_idx = last_seen.current_page - 1;
+      }
 
-      document.getElementById('content').appendChild(img);
-    })
+      if(sibling_idx === -1)
+      {
+        render_img(current_page);
+      }
+      else
+      {
+        const sibling_page = document.querySelector(`[data-idx="${sibling_idx}"]`);
+        if(sibling_idx > last_seen.current_page)
+        {
+          // do smt
+        }
+        else
+        {
+          // do smt
+        }
+      }
+    }
+
+
+
+
+
+
+    const current_page = document.querySelector(`[data-idx="${last_seen.current_page}"]`);
+    
+    let width = current_page.width;
+    let height = current_page.height;
+    let ratio = 1;
+
+    const image_ratio = height / width;
+    const window_ratio = __height / __width;
+
+    $(current_page).css('width', 'auto');
+    $(current_page).css('max-height', '100%');
+
+    // if(image_ratio > 1)
+    // {
+    //   $(current_page).css('width', 'auto');
+    //   $(current_page).css('max-height', '100%');
+    // }
+    // else
+    // {
+    //   // TODO: 가로가 긴 이미지 윈도우에 맞추기
+    //   $(current_page).css('height', 'auto');
+    //   $(current_page).css('max-width', '100%');
+    //   $(current_page).css('padding-top', `${100 * height/width }%`)
+    // }
+
+    $(current_page).css('display', '');
+    $(current_page).css('position', 'absolute');
+    $(current_page).css('margin', 'auto');
+    $(current_page).css('top', '0');
+    $(current_page).css('left', '0');
+    $(current_page).css('right', '0');
+    $(current_page).css('bottom', '0');
+
+    $('#btn_float').show();
+  }
+
+}
+change_view_mode(0);
+
+
+
+const current_view = () => {
+  const docViewTop = $(window).scrollTop();
+  const docViewBottom = docViewTop + $(window).height();
+
+  const last_seen_element = $(`[data-idx=${last_seen.current_page}]`)[0];
+  
+  if( last_seen_element === undefined || last_seen_element === null )
+  {
+    console.log(`data-idx ${last_seen.current_page} does not exists.`)
+    return;
+  }
+
+  const elemViewTop = $(last_seen_element).offset().top;
+  const elemViewBottom = elemViewTop + $(last_seen_element).height();
+
+  if(docViewTop < elemViewBottom)
+  {
+    console.log(last_seen);
+    return;
+  }
+
+  const contents = $('#content').children();
+
+  for(let i=last_seen.current_page; i<contents.length; i++)
+  {
+    const elemViewTop = $(contents[i]).offset().top;
+    const elemViewCenter = elemViewTop + $(contents[i]).height()/2;
+
+    if( elemViewCenter >= docViewTop && elemViewCenter <= docViewBottom )
+    {
+      last_seen.current_page = parseInt( contents[i].dataset.idx );
+      // send last_seen data to server
+      return;
+    }
+  }
+}
+
+if ($('.navbar').length > 0) { // check if element exists
+
+  $(window).on('scroll', function() {
+    current_view();
+
+    if( $(this).scrollTop() <= 0 || 
+        $(this).scrollTop() + __height + 50 >= $('#content').height() ) // some extra value: 50
+    {
+      $('.navbar').fadeIn(200);
+    }
+    else
+    {
+      $('.navbar').fadeOut(200);
+    }
+  });
+
+  $('#content').click(e => {
+    $('.navbar').fadeToggle(200);
+  })
+
+}
+
+
+/************************************************************/
+let start = new Date().getTime();
+let elapsed = 0;
+
+let doc = null
+let raw_contents = [];
+
+const socket = io('/dev', {forceNew: true});
+
+socket.on('connect', ()=>{
+  console.debug(`socket namespace: /reader`);
+})
+
+socket.on('doc', data => {
+  doc = data.doc;
+})
+
+socket.on('pic', data => {
+  if(elapsed === 0){
+    elapsed = new Date().getTime() - start;
+    console.debug(`image load elapsed time: ${elapsed}ms`);
+  }
+
+  console.log(data.idx + '-th image size:' + data.pic.byteLength + 'bytes.');
+
+  last_seen.total_page++;
+  // raw_contents.push(data.pic);
+  const pic = buf2img(data.pic)
+  let img = document.createElement('img');
+  img.classList = "img "
+  img.src = pic
+  img.dataset.idx = data.idx;
+  if(current_view_mode !== 0)
+  {
+    img.style.display = 'none';
+  }
+
+  document.getElementById('content').appendChild(img);
+});
+
+socket.on('err', e => {
+  console.debug(e);
+})
 
   </script>
 </html>

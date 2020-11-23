@@ -1,12 +1,12 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
-const {} = require('colors');
 const crypto = require('crypto');
 
 const db_settings = new PouchDB(path.join(__dirname, 'db/settings'));
 const db_library = new PouchDB(path.join(__dirname, 'db/library'));
 
+const console = require('./log');
 
 /*************** inner functions *********************/
 
@@ -45,6 +45,7 @@ let __book = class {
         this._id = ''
         this.type = '';  // zip, txt, pdf, epub, folder, ...
         this.title = '';
+        this.tags = [];
         this.path = '';
         this.parent = '';
         this.added = '';  // Date
@@ -59,6 +60,7 @@ let __book = class {
             _id: ${this._id},
             type: ${this.type},
             title: ${this.title},
+            tags: ${this.tags},
             path: ${this.path},
             parent: ${this.parent},
             added: ${this.added},
@@ -104,14 +106,14 @@ let __library = {
         {
             obj._id = obj.added + '.'+ crypto.createHash('md5').update(obj.path).digest('hex');
             await db_library.put(obj);
-            console.debug(`[DEBUG] new book added: ${obj.path} @/model.js`.gray)
+            console.model([`new book added: ${obj.path}`], '/model.js');
         }
         catch(e)
         {
             if(e.name === 'conflict'){
-                console.error(`${obj.path} is duplicated. @model.library.put @/model.js`.magenta );
+                console.model([`${obj.path} is duplicated. @model.library.put`], '/model.js' );
             }else{
-                console.error(e.red);
+                console.error(e);
                 console.trace();
             }
         }
@@ -150,6 +152,11 @@ let __library = {
     get_by_value: ({key, value}) => {
         // queries
         // https://pouchdb.com/guides/mango-queries.html
+    },
+
+    length: async () => {
+        let entries = await db_library.allDocs();
+        return entries.rows.length;
     },
 
     delete: (_id) => {

@@ -1,4 +1,5 @@
 const model = require('../model');
+const console = require('../log');
 
 module.exports.index = async (req, res, next) => {
     if(req.session.login){

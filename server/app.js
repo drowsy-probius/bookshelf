@@ -27,7 +27,8 @@ app.use(sassMiddleware({
   indentedSyntax: true, // true = .sass and false = .scss
   sourceMap: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {etag: false}));
+
 
 app.use(session({
   secret: '[conflict: Document update conflict]', // for session security

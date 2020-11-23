@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const readChunk = require('read-chunk');
+const console = require('../log');
 
 // check file type
 const FileType = require('file-type');
@@ -225,7 +226,7 @@ const __preview_txt = (file) => {
       const buffer = await fs.promises.readFile(file);
       let data = await buf2txt(buffer);
       data = data.split(/\n\r|\n/)
-      let preview = data.slice(0, 10).join('\n');
+      let preview = data.slice(0, 15).join('\n');
 
       resolve({preview: preview, pages: data.length});
     }catch(e){
@@ -260,47 +261,6 @@ const __preview_zip = (file) => {
         
       })
 
-      // zip.on('entry', entry => {
-      //   if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) === true){
-      //     preview = zip.entryDataSync(entry.name);
-      //     resolve({preview: resize_preview(preview), pages: zip.entriesCount});
-      //     zip.close();
-      //   }
-      // });
-
-      // if(stats.size < 26214400){  
-      //   /**
-      //    * small file
-      //    * less than 25mb
-      //    */
-      //   zip.on('ready', () => {
-      //     let first = null;
-      //     for (const entry of Object.values(zip.entries())) {
-      //       if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
-      //         first = entry;
-      //         preview = zip.entryDataSync(first.name);
-      //         resolve(resize_preview(preview))
-      //         zip.close();
-      //         break;
-      //       }
-      //     }
-      //   });
-      // }else{  
-      //   /**
-      //    * big file
-      //    * more or equal than 25mb
-      //    */
-      //   zip.on('entry', entry => {
-      //     if( ['jpg', 'gif', 'png'].includes(entry.name.split('.').pop()) ){
-      //       preview = zip.entryDataSync(entry.name);
-      //       resolve(resize_preview(preview));
-      //       zip.close();
-      //     }
-      //   });
-        
-      //   zip.close();
-      // }
-
       zip.on('error', err => { reject(err);});
     }catch(e){
       reject(e);
@@ -312,33 +272,16 @@ const __preview_pdf = (file) => {
   return new Promise(async (resolve, reject) => {
     try
     {
-      // const options = {
-      //   format: "png",
-      //   width: 200,
-      //   height: 283
-      // };
-
-      // const options = {
-      //   format: "png"
-      // };
-
-      // const convert = fromPath(file, options);
-      
-      // convert(1, true).then(preview => {
-      //   resolve( Buffer.from(preview.base64, 'base64') );
-      // });
-
       const pdf = new pdf2png(file);
       const pages = await pdf.getnumPages();
       const preview = await resize_preview(await pdf.thumbnail());
 
       resolve({preview: preview, pages: pages});
       pdf.destroy();
-
     }
     catch(e)
     {
-      console.debug(`[ERROR] ${file} cannot be processed. @/filehandler/main.js`.red);
+      console.file([`${file} cannot be processed.`], '/filehandler/main.js');
       reject(e);
     }
 
@@ -357,19 +300,6 @@ const __preview_folder = (folder) => {
       const preview = await resize_preview(await fs.promises.readFile(path.join(folder, files[0].name)));
       resolve({preview: preview, pages: files.length});
 
-
-      // for(let i=0; i<files.length; i++){
-
-
-      //   const file = files[i];
-      //   if(['jpg', 'png', 'gif'].includes(file.name.split('.').pop())){
-      //     const preview = await resize_preview(await fs.promises.readFile(path.join(folder, file.name)));
-      //     resolve({preview: preview, pages: files.length});
-
-      //     break;
-      //   }
-      // }
-
     }catch(e){
       reject(e);
     }
@@ -380,6 +310,19 @@ const __send_folder_to_zip = (doc, res) => {
   archive.pipe(res);
   archive.directory(doc.path, false);
   archive.finalize();
+}
+
+const __get_tags_from_filename = (filename) => {
+  const regexp = /\[[^\]]*\]|\([^)]*\)/g;
+  let tags = [];
+
+  [...filename.matchAll(regexp)].forEach(e => {
+    e = e[0].slice(1, -1);
+    e = e.split(/,\W+/);
+    e.forEach(m => tags.push(m));
+  })
+  
+  return tags;
 }
 
 /***************** modules ****************************/
@@ -409,3 +352,5 @@ module.exports.getOne = {
 }
 
 module.exports.folder2zip = __send_folder_to_zip;
+
+module.exports.tagsFromFilename = __get_tags_from_filename;

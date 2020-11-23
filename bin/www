@@ -39,9 +39,12 @@ const fs = require('fs');
  */
 
 //fileprocess.init(basedir);
-const books = ['/mnt/gdrive/E-books/만화/바라카몬', basedir, '/mnt/gdrive/E-books/pdf'];
+// const books = ['/mnt/gdrive/E-books/만화/바라카몬', basedir, '/mnt/gdrive/E-books/pdf'];
 //const books = [basedir, '/mnt/gdrive/E-books/pdf'];
+// const books = [path.resolve('./books/samples')];
+const books = [basedir];
 console.log(books);
+
 fileprocess.init(books);
 
 

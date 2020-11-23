@@ -14,7 +14,9 @@
  */
 
  /**
-  * original code
+  * custom by k123s456h
+  * 
+  * original source :
   * https://github.com/mozilla/pdf.js/tree/master/examples/node/pdf2png
   * 
   */
@@ -123,30 +125,34 @@ module.exports.pdf2png = class {
       cMapUrl: CMAP_URL,
       cMapPacked: CMAP_PACKED,
     });
-  }
+  };
 
-  thumbnail = () => {
+  thumbnail = () => 
+  {
     return new Promise( async (resolve, reject) => {
       resolve( await __getOne(this.loadingTask, 1) );
     });
-  }
+  };
 
-  getnumPages = () => {
+  getnumPages = () => 
+  {
     return new Promise( async (resolve, reject) => {
       resolve( await __getnumPages(this.loadingTask) );
     });
-  }
+  };
 
-  getOne = idx => {
+  getOne = idx => 
+  {
     return new Promise( async (resolve, reject) => {
       resolve( await __getOne(this.loadingTask, idx) );
     });
-  }
+  };
 
-  destroy = () => {
+  destroy = () => 
+  {
     this.loadingTask.promise.then( pdfdoc => {
       pdfdoc.destroy();
     })
-  }
+  };
 
 }

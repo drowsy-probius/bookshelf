@@ -2,7 +2,6 @@
 <html>
   <head>
     <% include ./common/head %>
-    <script src="/js/reader.js"></script>
   </head>
   <body>
     <div id='content'>
@@ -10,64 +9,8 @@
   </body>
 
   <script>
-    let doc = "<%= JSON.stringify(doc) %>";
-    doc = doc.replace(/&#34;/g, '\"');
-    doc = JSON.parse(doc);
-    let start = new Date().getTime();
-    let elapsed = 0;
-    const socket = io('/reader', {forceNew: true});
-
-    socket.on('connect', ()=>{
-      socket.emit('id', { id: '<%= id %>', width: document.body.width, height: document.body.height});
-      console.debug(`socket namespace: /reader`);
-    })
-
-    socket.on('pic', data => {
-      if(elapsed === 0){
-        elapsed = new Date().getTime() - start;
-        console.debug(`image load elapsed time: ${elapsed}ms`);
-      }
-
-      console.log(data.pic.length);
-
-      const pic = buf2img(data.pic)
-      let img = document.createElement('img');
-      img.classList = "img "
-      img.src = pic
-      img.dataset.idx = data.idx;
-
-      document.getElementById('content').appendChild(img);
-    });
-
-    socket.on('txt', data => {
-      if(elapsed === 0){
-        elapsed = new Date().getTime() - start;
-        console.debug(`image load elapsed time: ${elapsed}ms`);
-      }
-
-      let tmp = document.createElement('p');
-      tmp.classList = "txt "
-      tmp.innerText = data.txt;
-      tmp.dataset.idx = data.idx;
-      document.getElementById('content').appendChild(tmp);
-    })
-
-    socket.on('pdf', data => {
-      if(elapsed === 0){
-        elapsed = new Date().getTime() - start;
-        console.debug(`image load elapsed time: ${elapsed}ms`);
-      }
-
-      const pdf = buf2pdf(data.pdf);
-      let embed = document.createElement('embed');
-      embed.src = pdf;
-
-      document.getElementById('content').appendChild(embed);
-    })
-
-    socket.on('err', e => {
-      console.debug(e);
-    })
 
   </script>
+  <script src="/js/reader.js"></script>
+
 </html>

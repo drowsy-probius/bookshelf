@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const console = require('../log');
+
 const model = require('../model');
 const fileHandler = require('../filehandler/main');
 
@@ -9,6 +11,7 @@ router.get('/:id', async (req, res, next) => {
   try
   {
     const doc = await model.library.get(req.params.id);
+    doc.preview = '';
     res.render('reader', {id: req.params.id, doc: doc });
   }
   catch(e)

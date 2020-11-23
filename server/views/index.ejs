@@ -14,14 +14,25 @@
         }
       }
 
+      .cover{
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+      }
+
       .preview-img {
         width: 100%;
         display: inline-block;
         background-color: lightgray;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
       }
 
       .preview-txt {
-        height: 150px;
         width: 100%;
         display: inline-block;
         text-indent: 25px;
@@ -54,11 +65,22 @@
 
       <script>
         const socket = io('/index', {forceNew: true});
+        let __books = [];
         let __request = null;
+        let __pagesize = 20;
+        let __offset = 0;
+        let __hasNext = false;
+
+        socket.emit('index', {pagesize:__pagesize, offset:__offset});
         
-        socket.on('index', raw => {
+        socket.on('book', raw => {
           const book = raw.book;
-          console.debug('new book: ' + book.path);
+          __hasNext = raw.hasNext;
+          
+          if(__books.includes(book._id)) return;
+          __books.push(book._id);
+          // console.debug('new book: ' + book.path);
+          // console.debug(hasNext);
 
           let preview = book.type === 'txt' ? 
           `<div class="preview-txt reader" data-holder-rendered="true" data-id="${book._id}">${book.preview}</div>` :
@@ -67,12 +89,16 @@
           let entry = createElement('div', 'col-sm-6 col-md-4 col-lg-3 col-xl-2 book')
           entry.innerHTML = `
                   <div class="card mb-4 shadow-sm">
-                    ${preview}              
+                    <div class="cover"> ${preview} </div> 
                     <div class="card-body">
                       <p class="card-text reader" data-id="${book._id}">${book.title.title} - ${book.title.episode}</p>
                       <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                          <button type="button" class="btn btn-sm btn-outline-secondary download" data-id="${book._id}">↓</button>
+                        <div class="btn-group" style="left: -0.5em;">
+                          <svg class="download" data-id="${book._id}" width="1.4em" height="1.5em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <title>download</title>
+                            <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                          </svg>  
                         </div>
                         <small class="text-muted date" name="added">${new Date(book.added).toLocaleString('ko-KR')}</small>
                       </div>
@@ -107,6 +133,14 @@
             console.debug(`donwload ${id}`);
           });
         });
+
+        window.onscroll = function(){
+          if( __books.length >= __pagesize && ($(window).innerHeight() + $(window).scrollTop()) >= $("body").height() && __hasNext )
+          {
+            __offset += __pagesize;
+            socket.emit('index', {pagesize:__pagesize, offset:__offset});
+          }
+        }
       </script>
 
     </main>

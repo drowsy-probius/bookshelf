@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const console = require('../log');
 
 const ctrlLocations = require('../controllers/locations');
 
@@ -9,12 +10,12 @@ router.post('/login', (req, res, next) => {
       req.session.login = true;
       req.session.user_id = req.body.id;
 
-      console.debug(`[DEBUG] login approved as "${req.body.id}" @/routes/auth.js`.green);
-      //console.debug(req.session);
+      console.route([`login approved as "${req.body.id}"`], '/routes/auth.js');
+      //console.route([req.session], '/routes/auth.js');
       res.redirect('/');
     })
   }else{
-    console.debug(`[DEBUG] login not approved as "${req.body.id}" @/routes/auth.js`.red);
+      console.route([`login not approved as "${req.body.id}"`], '/routes/auth.js');
     res.redirect('/');
   }
 

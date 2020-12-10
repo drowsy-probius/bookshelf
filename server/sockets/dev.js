@@ -14,8 +14,7 @@ const sleep = (ms) => {
 const _dev = dev => {
   dev.on('connect', async socket => { // 나중에 async하고 get_all 제거
 
-
-    const db = await model.library.get_all(100, 0);
+    const db = await model.library.db.allDocs({include_docs:true});
     const books = db.rows.map(function(item){return item.doc;});
     let idx = Math.floor( Math.random() * books.length );
 
@@ -25,7 +24,7 @@ const _dev = dev => {
     let file = books[idx].path;
 
     socket.emit('doc', {doc: books[idx]});
-    console.socket([books[idx]], '/sockets/dev.js');
+    console.socket(books[idx], '/sockets/dev.js');
 
     const zip = new StreamZip({
       file: file,
@@ -47,7 +46,7 @@ const _dev = dev => {
          * 강제로 sleep안하면 많은 데이터가
          * 한번에 넘어가서 클라이언트에서 로딩이 오래걸림
          */
-        console.socket([file.name, file.size], '/sockets/dev.js');
+        console.socket(`sent ${file.name} - ${file.size}bytes`, '/sockets/dev.js');
         await sleep(1);
         socket.emit('pic', {pic: pic, idx: i});
       }

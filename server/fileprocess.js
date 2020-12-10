@@ -71,11 +71,11 @@ const __scanDirectory = (dirs) =>
           if( ( await is_book_folder(target) ) === true)
           {
             if( model.library.isDuplicate(target) === true ){
-              console.file([`${target} is already in db.`], '/fileprocess.js');
+              console.file(`${target} is already in db.`, '/fileprocess.js');
               continue;
             }
             
-            console.file([`found a new book: ${target}`], '/fileprocess.js');
+            console.file(`found a new book: ${target}`, '/fileprocess.js');
             const info = await fileHandler.preview.folder(target);
             let book = new model.book();
 
@@ -107,7 +107,7 @@ const __scanDirectory = (dirs) =>
            * THEN it would be one of zip, txt, pdf, epub, ...
            */
           if( await model.library.isDuplicate(target) === true ){
-            console.file([`${target} is already in db.`], '/fileprocess.js');
+            console.file(`${target} is already in db.`, '/fileprocess.js');
             continue;
           }
 
@@ -122,11 +122,11 @@ const __scanDirectory = (dirs) =>
           }else if(ext === 'epub'){
             ext = 'pdf';
           }else{
-            console.file([`not a book: ${target}`], '/fileprocess.js');
+            console.file(`not a book: ${target}`, '/fileprocess.js');
             continue;
           }
 
-          console.file([`found a new book: ${target}`], '/fileprocess.js');
+          console.file(`found a new book: ${target}`, '/fileprocess.js');
           const info = await fileHandler.preview[ext](target);
           let book = new model.book();
 

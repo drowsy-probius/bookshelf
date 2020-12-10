@@ -14,7 +14,7 @@ let bookSentCount = 0;
 
 const _index = index => {
   index.on('connect', async socket => {
-    console.socket([`/index`], '/sockets/index.js');
+    console.socket(`/index`, '/sockets/index.js');
     bookSentList = [];
     bookSentCount = 0;
 
@@ -56,7 +56,7 @@ const _index = index => {
         worker = setInterval( ()=>{
           if(bookSentCount >= data.pagesize)
           {
-            console.socket([`all requested entries sent.`], '/sockets/index.js');
+            console.socket(`all requested entries sent.`, '/sockets/index.js');
             clearInterval(worker);
           }
           index_send(data.pagesize, data.offset); 
@@ -70,7 +70,7 @@ const _index = index => {
     });
 
     socket.on('disconnect', ()=>{
-      console.socket([`disconnected from /index`], '/sockets/index.js');
+      console.socket(`disconnected from /index`, '/sockets/index.js');
       if(worker){
         clearInterval(worker);
       }

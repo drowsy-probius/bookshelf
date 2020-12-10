@@ -43,15 +43,18 @@ let __user = class {
 let __book = class {
     constructor(){
         this._id = ''
-        this.type = '';  // zip, txt, pdf, epub, folder, ...
+
+        this.type = '';  // zip, txt, pdf, epub, folder, collection
         this.title = '';
         this.tags = [];
         this.path = '';
         this.parent = '';
+
         this.added = '';  // Date
         this.pages = 0;
         this.last_seen_page = 0;
         this.preview = '';
+
         this.group = ''; // user _id
     }
 
@@ -106,12 +109,12 @@ let __library = {
         {
             obj._id = obj.added + '.'+ crypto.createHash('md5').update(obj.path).digest('hex');
             await db_library.put(obj);
-            console.model([`new book added: ${obj.path}`], '/model.js');
+            console.model(`new book added: ${obj.path}`, '/model.js');
         }
         catch(e)
         {
             if(e.name === 'conflict'){
-                console.model([`${obj.path} is duplicated. @model.library.put`], '/model.js' );
+                console.model(`${obj.path} is duplicated. @model.library.put`, '/model.js' );
             }else{
                 console.error(e);
                 console.trace();

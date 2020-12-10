@@ -281,7 +281,7 @@ const __preview_pdf = (file) => {
     }
     catch(e)
     {
-      console.file([`${file} cannot be processed.`], '/filehandler/main.js');
+      console.file(`${file} cannot be processed.`, '/filehandler/main.js');
       reject(e);
     }
 

@@ -6,7 +6,9 @@ const ctrlLocations = require('../controllers/locations');
 
 router.get('/', ctrlLocations.index);
 
-router.get('/dev', ctrlLocations.dev)
+router.get('/dev', ctrlLocations.dev);
+
+router.get('/books', ctrlLocations.books);
 
 
 module.exports = router;

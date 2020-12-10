@@ -18,3 +18,10 @@ module.exports.index = async (req, res, next) => {
 module.exports.dev = async (req, res, next) => {
     res.render('dev');
 }
+
+module.exports.books = async (req, res, next) => {
+    let pagesize = req.params.pagesize;
+    let offset = req.params.offset;
+    let filter = req.params.filter;
+    model.library
+}

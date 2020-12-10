@@ -10,7 +10,7 @@ const _reader = reader => {
       {
         const doc = await model.library.get(req.id);
 
-        console.socket([`request /reader/${doc._id} -> ${doc.path}`], '/sockets.reader.js');
+        console.socket(`request /reader/${doc._id} -> ${doc.path}`, '/sockets.reader.js');
 
         if( ['zip', 'txt', 'folder', 'pdf', 'epub'].includes(doc.type) )
         {
@@ -18,7 +18,7 @@ const _reader = reader => {
         }
         else
         {
-          throw new Error(`unknown type: ${doc._id} - ${doc.path} - ${doc.type} @/socket/reader.js`.blue);
+          throw new Error(`unknown type: ${doc._id} - ${doc.path} - ${doc.type} @/socket/reader.js`);
         }
       }
       catch(e)

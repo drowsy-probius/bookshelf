@@ -1,61 +1,40 @@
-const {} = require('colors');
+const colors = require('colors');
 
-const _log = function(messages=[], pos='/')
+const _log = function(messages, pos='/')
 {
-  for(let i=0; i<messages.length; i++)
-  {
-    console.log(`[INFO] ${messages[i]} @${pos}`);
-  }
+  console.log(colors.white(`[INFO] %s @%s`), messages, pos);
 };
 
-const _debug = function(messages=[], pos='/')
+const _debug = function(messages, pos='/')
 {
-  for(let i=0; i<messages.length; i++)
-  {
-    console.debug(`[DEBUG] ${messages[i]} @${pos}`);
-  }
+  console.log(colors.white(`[DEBUG] %s @%s`), messages, pos);
 }
 
-const _socket = function(messages=[], pos='/')
+const _socket = function(messages, pos='/')
 {
-  for(let i=0; i<messages.length; i++)
-  {
-    console.debug(`[DEBUG] ${messages[i]} @${pos}`.blue);
-  }
+  console.log(colors.blue(`[DEBUG] %s @%s`), messages, pos);
 }
 
-const _model = function(messages=[], pos='/')
+const _model = function(messages, pos='/')
 {
-  for(let i=0; i<messages.length; i++)
-  {
-    console.debug(`[DEBUG] ${messages[i]} @${pos}`.magenta);
-  }
+  console.log(colors.magenta(`[DEBUG] %s @%s`), messages, pos);
 }
 
-const _file = function(messages=[], pos='/')
+const _file = function(messages, pos='/')
 {
-  for(let i=0; i<messages.length; i++)
-  {
-    console.debug(`[DEBUG] ${messages[i]} @${pos}`.gray);
-  }
+  console.log(colors.gray(`[DEBUG] %s @%s`), messages, pos);
 }
 
-const _route = function(messages=[], pos='/')
+const _route = function(messages, pos='/')
 {
-  for(let i=0; i<messages.length; i++)
-  {
-    console.debug(`[DEBUG] ${messages[i]} @${pos}`.yellow);
-  }
+  console.log(colors.yellow(`[DEBUG] %s @%s`), messages, pos);
 }
 
 /**********************************/
 
-const _error = function()
+const _error = function(error, pos='/')
 {
-  for(let i=0; i<arguments.length; i++)
-  {
-    console.error(arguments[i]);
-  }
+  console.error(colors.red(`[DEBUG] %s @%s`), error, pos);
 }
 
 const _trace = () => {

@@ -28,9 +28,12 @@
       </button>
     </div>
 
-    <div id='content'>
+    <div id='content' class="">
     </div>
-    
+
+    <div id="viewer" class="">
+      <canvas id="canvas" style="max-width: 100%; height: auto;"></canvas>
+    </div>
 
     <div id="footer_nav" class="navbar navbar-bottom navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
@@ -81,6 +84,20 @@
       cursor:pointer;
       overflow: hidden;
       outline:none!important;
+    }
+
+    .large-one-img {
+      max-width: 100%;
+      max-height: 100%;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      overflow: auto;
+      position: fixed;
+      right: 0;
+      top: 0;
+      -o-object-fit: contain;
+      object-fit: contain;
     }
 
     .navbar {
@@ -191,6 +208,15 @@ const __btn_view = {
   1: __btn_book_half,
   2: __btn_book_full
 }
+
+/************************************************************/
+let last_seen = {
+  current_page: 0,
+  total_page: 0
+}
+let current_view_mode = 0;
+
+
 /************************************************************/
 
 $('.arrow_left').click( () => {
@@ -211,51 +237,63 @@ $('.arrow_right').click( () => {
   console.log(last_seen)
 });
 
-
 /************************************************************/
-let last_seen = {
-  current_page: 0,
-  total_page: 0
-}
-let current_view_mode = 0;
-
 
 const render_img = page => {
-  document.querySelectorAll('#content > img').forEach(i => i.style = '' );
-  document.querySelectorAll('#content > img').forEach(i => $(i).css('display', 'none'));
+  // document.querySelectorAll('#content > img').forEach(i => i.style = '' );
+  // document.querySelectorAll('#content > img').forEach(i => {$(i).css('display', 'none'); $(i).removeClass('large-one-img')});
 
-  const current_page = document.querySelector(`[data-idx="${page}"]`);
-  let width = current_page.width;
-  let height = current_page.height;
-  let ratio = 1;
+  const img_src = document.querySelector(`[data-idx="${page}"]`).src;
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
 
-  const image_ratio = height / width;
-  const window_ratio = __height / __width;
+  const img = new Image();
 
-  $(current_page).css('width', 'auto');
-  $(current_page).css('max-height', '100%');
+  img.addEventListener('load', function(){
+    //canvas.width = img.naturalWidth;
+    //canvas.height = img.naturalHeight;
+    ctx.drawImage(img, 0, 0), img.naturalWidth, img.naturalHeight;
+  });
 
-  // if(image_ratio > 1)
-  // {
-  //   $(current_page).css('max-width', '100%');
-  //   $(current_page).css('width', 'auto');
-  //   $(current_page).css('height', '100%');
-  // }
-  // else
-  // {
-  //   // TODO: 가로가 긴 이미지 윈도우에 맞추기
-  //   $(current_page).css('max-height', '100%');
-  //   $(current_page).css('width', '100%');
-  //   $(current_page).css('height', 'auto');
-  // }
+  img.src = img_src;
 
-  $(current_page).css('display', '');
-  $(current_page).css('position', 'absolute');
-  $(current_page).css('margin', 'auto');
-  $(current_page).css('top', '0');
-  $(current_page).css('left', '0');
-  $(current_page).css('right', '0');
-  $(current_page).css('bottom', '0');
+
+  // const current_page = document.querySelector(`[data-idx="${page}"]`);
+  // let width = current_page.width;
+  // let height = current_page.height;
+  // let ratio = 1;
+
+  // const image_ratio = height / width;
+  // const window_ratio = __height / __width;
+
+  // $(current_page).css('display', '');
+
+  // $(current_page).addClass('large-one-img');
+
+  // $(current_page).css('width', 'auto');
+  // $(current_page).css('max-height', '100%');
+
+  // // if(image_ratio > 1)
+  // // {
+  // //   $(current_page).css('max-width', '100%');
+  // //   $(current_page).css('width', 'auto');
+  // //   $(current_page).css('height', '100%');
+  // // }
+  // // else
+  // // {
+  // //   // TODO: 가로가 긴 이미지 윈도우에 맞추기
+  // //   $(current_page).css('max-height', '100%');
+  // //   $(current_page).css('width', '100%');
+  // //   $(current_page).css('height', 'auto');
+  // // }
+
+  // $(current_page).css('display', '');
+  // $(current_page).css('position', 'absolute');
+  // $(current_page).css('margin', 'auto');
+  // $(current_page).css('top', '0');
+  // $(current_page).css('left', '0');
+  // $(current_page).css('right', '0');
+  // $(current_page).css('bottom', '0');
 }
 
 
@@ -298,6 +336,9 @@ const change_view_mode = view_mode => {
 
   if(view_mode === 0)
   {
+    $('#content').removeClass('hide');
+    $('#viewer').addClass('hide');
+
     document.body.style.backgroundColor = 'rgb(247, 239, 218)';
     
     // content.innerHTML = '';
@@ -335,6 +376,9 @@ const change_view_mode = view_mode => {
   }
   else if(view_mode === 1)
   {
+    $('#content').addClass('hide');
+    $('#viewer').removeClass('hide');
+
     document.body.style.backgroundColor = 'rgb(33, 32, 30)';
 
     render_img(last_seen.current_page);
@@ -408,19 +452,17 @@ const change_view_mode = view_mode => {
 
 
 
-
-
-    const current_page = document.querySelector(`[data-idx="${last_seen.current_page}"]`);
+    const current_image = document.querySelector(`[data-idx="${last_seen.current_page}"]`);
     
-    let width = current_page.width;
-    let height = current_page.height;
+    let width = current_image.width;
+    let height = current_image.height;
     let ratio = 1;
 
     const image_ratio = height / width;
     const window_ratio = __height / __width;
 
-    $(current_page).css('width', 'auto');
-    $(current_page).css('max-height', '100%');
+    $(current_image).css('width', 'auto');
+    $(current_image).css('max-height', '100%');
 
     // if(image_ratio > 1)
     // {
@@ -435,13 +477,13 @@ const change_view_mode = view_mode => {
     //   $(current_page).css('padding-top', `${100 * height/width }%`)
     // }
 
-    $(current_page).css('display', '');
-    $(current_page).css('position', 'absolute');
-    $(current_page).css('margin', 'auto');
-    $(current_page).css('top', '0');
-    $(current_page).css('left', '0');
-    $(current_page).css('right', '0');
-    $(current_page).css('bottom', '0');
+    $(current_image).css('display', '');
+    $(current_image).css('position', 'absolute');
+    $(current_image).css('margin', 'auto');
+    $(current_image).css('top', '0');
+    $(current_image).css('left', '0');
+    $(current_image).css('right', '0');
+    $(current_image).css('bottom', '0');
 
     $('#btn_float').show();
   }

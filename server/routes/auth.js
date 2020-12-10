@@ -10,12 +10,12 @@ router.post('/login', (req, res, next) => {
       req.session.login = true;
       req.session.user_id = req.body.id;
 
-      console.route([`login approved as "${req.body.id}"`], '/routes/auth.js');
-      //console.route([req.session], '/routes/auth.js');
+      console.route(`login approved as "${req.body.id}"`, '/routes/auth.js');
+      //console.route(req.session, '/routes/auth.js');
       res.redirect('/');
     })
   }else{
-      console.route([`login not approved as "${req.body.id}"`], '/routes/auth.js');
+      console.route(`login not approved as "${req.body.id}"`, '/routes/auth.js');
     res.redirect('/');
   }
 

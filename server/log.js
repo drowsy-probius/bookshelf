@@ -1,21 +1,30 @@
-import colors from 'colors';
+import winston from 'winston';
+import winstonDaily from 'winston-daily-rotate-file';
 
-const logger = {};
+import {logConfig} from './constants';
 
-logger.log = function(message, pos='not defined'){
-  return console.log(colors.white(`[INFO] %s @%s`), message, pos);
+const {createLogger, format, transports} = winston;
+
+const {dirname, zippedArchive, maxFiles} = logConfig;
+
+function logFormat(info){
+  return printf((info) => {
+    return `${info.timestamp} [${info.level}]: ${info.message}`
+  })
 }
 
-logger.debug = function(message, pos='not defined'){
-  return console.log(colors.gray(`[DEBUG] %s @%s`), message, pos);
-}
+const logger = createLogger({
+  level: 'info',
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+    }),
+    format.errors({stack: true}),
+    format.splat(),
+    format.json(),
+  ),
+  
+})
 
-logger.error = function (message, pos='not defined'){
-  return console.error(colors.red(`[INFO] %s @%s`), message, pos);
-}
-
-logger.trace = function(){
-  return console.trace();
-}
 
 export default logger;

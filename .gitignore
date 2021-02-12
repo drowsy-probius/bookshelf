@@ -65,3 +65,5 @@ typings/
 
 # database folder
 ./server/database/*
+
+dummy.js

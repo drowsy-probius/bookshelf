@@ -1,8 +1,8 @@
-import StreamZip from 'node-stream-zip';
+const StreamZip = require('node-stream-zip');
 
-import Book from '../Book';
-import {resizePreview} from '../image';
-import {imageExtensions} from '../../../constants';
+const Book = require('../Book');
+const {resizePreview} = require('../image');
+const {imageExtensions} = require('../../../constants');
 
 function filteredData(filePath)
 {
@@ -90,4 +90,4 @@ class BookZip extends Book{
   }
 }
 
-export default BookZip;
+module.exports = BookZip;

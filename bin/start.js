@@ -1,4 +1,3 @@
 #!/usr/bin/env node
 
-import App from '../server/app';
-
+const App = require('../server/index')

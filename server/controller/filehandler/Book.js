@@ -1,4 +1,4 @@
-import path from 'path';
+const path = require('path')
 
 class Book {
   constructor(filePath){
@@ -66,4 +66,4 @@ class Book {
 
 }
 
-export default Book;
+module.exports = Book;

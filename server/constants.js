@@ -1,12 +1,12 @@
-import path from 'path';
+const path = require('path');
 
-export const logConfig = {
+const logConfig = {
   dirname: path.resolve('./logs'),
   zippedArchive: false,
-  maxFiles: -1,
+  maxFiles: 15,
 }
 
-export const imageExtensions = [
+const imageExtensions = [
   'jpg',
   'gif',
   'png',
@@ -35,7 +35,7 @@ export const imageExtensions = [
  * IFM1이면 만화로 처리되지 않고,
  * IFM2이면 만화로 처리됨.
  */
-export const ignoreFileNames = [
+const ignoreFileNames = [
   '.*readme.*',
   '.*info.*'
 ]
@@ -48,6 +48,14 @@ export const ignoreFileNames = [
  * 라이브러리 폴더를 스캔할 때,
  * 다음 이름을 가진 타겟(folder, zip, epub, pdf 등 지원하는 타입)은 스킵함.
  */
-export const ignoreScanNames = [
+const ignoreScanNames = [
   
 ]
+
+
+module.exports = {
+  logConfig, 
+  imageExtensions,
+  ignoreFileNames,
+  ignoreScanNames,
+}

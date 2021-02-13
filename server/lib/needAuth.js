@@ -1,4 +1,4 @@
-export async function isLogin(req, res, next)
+async function isLogin(req, res, next)
 {
   if(req.session.user && req.session.user.uid)
   {
@@ -8,4 +8,8 @@ export async function isLogin(req, res, next)
   {
     return res.redirect('/');
   }
+}
+
+module.exports = {
+  isLogin,
 }

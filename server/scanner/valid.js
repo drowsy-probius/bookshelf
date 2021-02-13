@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-import {imageExtensions, ignoreFileNames} from '../constants';
+const {imageExtensions, ignoreFileNames} = require('../constants');
 
 
-export function ignoreThis(fileName)
+function ignoreThis(fileName)
 {
   ignoreFileNames.forEach((ignoreName) => {
     const ignoreRegexp = new RegExp(ignoreName);
@@ -17,7 +17,7 @@ export function ignoreThis(fileName)
 }
 
 
-export function isBookFolder(folderPath)
+function isBookFolder(folderPath)
 {
   fs.promises.readdir(folderPath, {withFileTypes: true})
   .then((files) => {
@@ -52,3 +52,8 @@ export function isBookFolder(folderPath)
     return false;
   })
 } 
+
+module.exports = {
+  ignoreThis,
+  isBookFolder,
+}

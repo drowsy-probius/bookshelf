@@ -1,5 +1,4 @@
-
-import watchQueue from './queue';
+const watchQueue = require('./queue');
 
 class Watcher {
   constructor(){
@@ -9,4 +8,4 @@ class Watcher {
   }
 }
 
-export default Watcher;
+module.exports = Watcher;

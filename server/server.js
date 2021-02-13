@@ -1,10 +1,13 @@
-import express from 'express';
-import createError from 'http-errors';
-import * as httpLogger from 'morgan';
-import session from 'express-session';
-import path from 'path';
+const express = require('express');
+const createError = require('http-errors');
+const session = require('express-session');
+const path = require('path');
 
-import router from './router';
+const morganLogger = require('morgan');
+const {loggerStreamHTTP} = require('./log');
+
+const router = require('./router');
+
 
 
 const expressApp = express();
@@ -12,7 +15,7 @@ const expressApp = express();
 expressApp.set('views', path.join(__dirname, 'views'));
 expressApp.set('view engine', 'ejs');
 
-expressApp.use(httpLogger('dev'));
+expressApp.use(morganLogger('combined', {loggerStreamHTTP}));
 expressApp.use(express.json());
 expressApp.use(express.urlencoded({extended: false}));
 
@@ -38,4 +41,4 @@ expressApp.use((err, req, res, next) => {
   res.send(`${err.message} ${err.status}<br>${err.stack}`);
 })
 
-export default expressApp;
+module.exports = expressApp;

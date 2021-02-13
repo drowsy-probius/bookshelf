@@ -1,2 +1,7 @@
-export let scanQueue = [];
-export let watchQueue = [];
+let scanQueue = [];
+let watchQueue = [];
+
+module.exports = {
+  scanQueue,
+  watchQueue,
+}

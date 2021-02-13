@@ -1,15 +1,16 @@
-import path from 'path';
-import child_process from 'child_process';
+const path = require('path');
+const child_process = require('child_process');
 
-import logger from './log';
+const {logger} = require('./log');
 
-import Database from './controller/database';
+const Database = require('./controller/database');
 const database = new Database();
 
-import Scanner from './scanner/Scanner';
-import Watcher from './scanner/Watcher';
+const Scanner = require('./scanner/Scanner');
+const Watcher = require('./scanner/Watcher');
 
-import expressApp from './server';
+const expressApp = require('./server');
+
 
 class App{
   constructor(host='0.0.0.0', port=3456){
@@ -38,4 +39,4 @@ class App{
   }
 }
 
-export default App;
+module.exports = App;

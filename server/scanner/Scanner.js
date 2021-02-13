@@ -1,7 +1,7 @@
-import path from 'path';
-import logger from '../log';
+const path = require('path');
+const {logger} = require('../log');
 
-import scanQueue from './queue'
+const scanQueue = require('./queue');
 
 class Scanner {
   constructor(folderPath)
@@ -17,4 +17,4 @@ class Scanner {
   }
 }
 
-export default Scanner;
+module.exports = Scanner;

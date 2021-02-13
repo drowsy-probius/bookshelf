@@ -1,6 +1,6 @@
-import * as BetterSqlite3 from 'BetterSqlite3';
+const BetterSqlite3 = require('better-sqlite3');
 
-import logger from '../../log';
+const {logger} = require('../../log')
 
 class Database {
   constructor(){
@@ -9,4 +9,4 @@ class Database {
 }
 
 
-export default Database;
+module.exports = Database;

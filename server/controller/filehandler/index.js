@@ -3,7 +3,16 @@
  */
 
 // export * from './type/epub';
-export * from './type/folder';
+
 // export * from './type/pdf';
-export * from './type/text';
-export * from './type/zip';
+
+const folder = require('./type/folder');
+
+const text = require('./type/text');
+const zip = require('./type/zip');
+
+module.exports = {
+  folder,
+  text,
+  zip,
+}

@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-import Book from '../Book';
-import {resizePreview} from '../image';
-import {imageExtensions} from '../../../constants';
+const Book = require('../Book');
+const {resizePreview} = require('../image');
+const {imageExtensions} = require('../../../constants');
 
 async function filteredData(filePath)
 {
@@ -69,4 +69,4 @@ class BookFolder extends Book{
   }
 }
 
-export default BookFolder;
+module.exports = BookFolder;

@@ -1,11 +1,11 @@
-import sharp from 'sharp';
+const sharp = require('sharp');
 
 /**
  * returns Promise<image buffer>
  * 
  * @param {image_buffer} buffer 
  */
-export function resizePreview(buffer)
+function resizePreview(buffer)
 {
   return new Promise((resolve, reject) => {
     try
@@ -36,4 +36,8 @@ export function resizePreview(buffer)
       reject(e);
     }
   })
+}
+
+module.exports = {
+  resizePreview,
 }

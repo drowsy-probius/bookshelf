@@ -1,9 +1,9 @@
-import fs from 'fs';
+const fs = require('fs');
 
-import iconvlite from 'iconv-lite';
-import chardet from 'chardet';
+const iconvlite = require('iconv-lite');
+const chardet = require('chardet');
 
-import Book from '../Book';
+const Book = require('../Book');
 
 /**
  * convert 'chardet' format to 'iconvlite' format
@@ -104,4 +104,4 @@ class BookText extends Book
 
 }
 
-export default BookText;
+module.exports = BookText;

@@ -19,7 +19,7 @@ class App{
 
   run(host, port){
     expressApp.listen(port, host, ()=>{
-      logger.log(`Server listening on ${host}:${port}`);
+      logger.info(`Server listening on ${host}:${port}`);
     });
 
   }
@@ -27,16 +27,18 @@ class App{
   scan(folderPath){
     const scanWorker = child_process.fork(Scanner, folderPath);
     scanWorker.on('close', (code) => {
-      logger.log('scan job exited with code: ' + code);
+      logger.info('scan job exited with code: ' + code);
     });
   }
 
   watch(folderPath){
     const watchWorker = child_process.fork(Watcher, folderPath);
     watchWorker.on('close', (code) => {
-      logger.log('watch job exited with code: ' + code)
+      logger.info('watch job exited with code: ' + code)
     });
   }
 }
 
-module.exports = App;
+new App();
+
+//module.exports = App;

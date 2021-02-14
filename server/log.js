@@ -1,4 +1,3 @@
-const { Logform } = require('winston');
 const winston = require('winston');
 const winstonDaily = require('winston-daily-rotate-file');
 const {logConfig} = require('./constants')
@@ -79,7 +78,7 @@ const logger = createLogger({
   ]
 });
 
-const loggerStreamHTTP = {
+const loggerStream = {
   write: (message) => {
     logger.info(message)
   }
@@ -91,4 +90,4 @@ if(process.env.NODE_ENV !== 'production'){
 }
 
 
-module.exports = {logger, loggerStreamHTTP};
+module.exports = {logger, loggerStream};

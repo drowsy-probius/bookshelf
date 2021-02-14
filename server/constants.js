@@ -1,10 +1,17 @@
 const path = require('path');
 
 const logConfig = {
-  dirname: path.resolve('./logs'),
+  dirname: path.resolve(
+    process.env.BOOKSHELF_LOG || path.join(__dirname, '../logs')
+  ),
   zippedArchive: false,
   maxFiles: 15,
 }
+
+// absoulte path
+const databaseDirectory = path.resolve(
+  process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
+);
 
 const imageExtensions = [
   'jpg',
@@ -55,6 +62,7 @@ const ignoreScanNames = [
 
 module.exports = {
   logConfig, 
+  databaseDirectory,
   imageExtensions,
   ignoreFileNames,
   ignoreScanNames,

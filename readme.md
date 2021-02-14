@@ -1,4 +1,9 @@
 # TODO
+작업 요청
+https://github.com/OptimalBits/bull
+
+
+
 index.js
 앱 시작점을 어떻게 처리할까
 프로세스 여러개 만들어서 병렬로 처리하고싶은데

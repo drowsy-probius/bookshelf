@@ -64,6 +64,6 @@ typings/
 ./books/*
 
 # database folder
-./server/database/*
+database**
 
 dummy.js

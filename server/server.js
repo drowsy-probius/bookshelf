@@ -4,10 +4,9 @@ const session = require('express-session');
 const path = require('path');
 
 const morganLogger = require('morgan');
-const {loggerStreamHTTP} = require('./log');
+const {loggerStream} = require('./log');
 
 const router = require('./router');
-
 
 
 const expressApp = express();
@@ -15,7 +14,7 @@ const expressApp = express();
 expressApp.set('views', path.join(__dirname, 'views'));
 expressApp.set('view engine', 'ejs');
 
-expressApp.use(morganLogger('combined', {loggerStreamHTTP}));
+expressApp.use(morganLogger('combined', {stream: loggerStream}));
 expressApp.use(express.json());
 expressApp.use(express.urlencoded({extended: false}));
 
@@ -40,5 +39,6 @@ expressApp.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send(`${err.message} ${err.status}<br>${err.stack}`);
 })
+
 
 module.exports = expressApp;

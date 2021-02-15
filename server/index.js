@@ -11,13 +11,7 @@ const Watcher = require('./scanner/Watcher');
 
 const expressApp = require('./server');
 
-require('./redis')
-
-const scanQueue = require('./controller/queue/scan');
-scanQueue.add({test: 1})
-scanQueue.on('completed', (job, result) => {
-  console.log(result);
-})
+require('./redis');
 
 class App{
   constructor(host='0.0.0.0', port=3456){

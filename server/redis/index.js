@@ -1,9 +1,10 @@
 const {spawn, execSync} = require('child_process');
 const fs = require('fs');
+const path = require('path');
 
 const {logger} = require('../log');
 
-const {REDIS_PORT, databaseDirectory} = require('../constants');
+const {redisPort, databaseDirectory} = require('../constants');
 const { throws } = require('assert');
 
 try
@@ -15,9 +16,12 @@ try
   const redisBinary = execSync('redis-server --version');
   logger.info(redisBinary)
 
-  !fs.existsSync(databaseDirectory) && fs.mkdirSync(databaseDirectory, {recursive: true});
+  const redisDirectory = path.join(databaseDirectory, 'redis');
+  !fs.existsSync(redisDirectory) && fs.mkdirSync(redisDirectory, {recursive: true});
 
-  const redisServer = spawn('redis-server', [`--port ${REDIS_PORT}`], [`--dir ${databaseDirectory}`])
+  const redisServer = spawn('redis-server', 
+  ['--bind', '127.0.0.1', '--port', redisPort, 
+  '--dir', redisDirectory, '--always-show-logo', 'no'])
 
   redisServer.stdout.on('data', (stdout) => {
     logger.info('[redis] '+stdout);

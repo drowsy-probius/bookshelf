@@ -5,7 +5,7 @@ const path = require('path');
  * environment variable BOOKSHELF_REDIS_PORT or
  * 63279
  */
-const REDIS_PORT = Number(process.env.BOOKSHELF_REDIS_PORT) || 63279;
+const redisPort = process.env.BOOKSHELF_REDIS_PORT || 63279;
 
 
 /**
@@ -98,7 +98,7 @@ const ignoreScanNames = [
 
 
 module.exports = {
-  REDIS_PORT,
+  redisPort,
   logConfig, 
   databaseDirectory,
   fileExtensions,

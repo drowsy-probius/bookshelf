@@ -13,7 +13,7 @@ module.exports = async function(job, done)
     done(null, 'success')
   })
   .catch(()=>{
-    done(job, 'fail')
+    done(null, 'fail')
   })
 }
 

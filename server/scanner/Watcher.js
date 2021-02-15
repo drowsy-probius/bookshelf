@@ -1,5 +1,3 @@
-const watchQueue = require('./queue');
-
 class Watcher {
   constructor(){
     /**

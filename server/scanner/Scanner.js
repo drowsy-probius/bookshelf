@@ -1,8 +1,6 @@
 const path = require('path');
 const {logger} = require('../log');
 
-const scanQueue = require('./queue');
-
 class Scanner {
   constructor(folderPath)
   {

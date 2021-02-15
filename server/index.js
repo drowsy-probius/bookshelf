@@ -13,6 +13,12 @@ const expressApp = require('./server');
 
 require('./redis')
 
+const scanQueue = require('./controller/queue/scan');
+scanQueue.add({test: 1})
+scanQueue.on('completed', (job, result) => {
+  console.log(result);
+})
+
 class App{
   constructor(host='0.0.0.0', port=3456){
     this.run(host, port)

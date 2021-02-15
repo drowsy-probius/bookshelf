@@ -1,2 +1,3 @@
-const Queue = require('bull');
-
+module.exports = {
+  scanQueue: require('./scan'),
+}

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const {imageExtensions, ignoreFileNames} = require('../constants');
+const {fileExtensions, ignoreFileNames} = require('../constants');
 
 
 function ignoreThis(fileName)
@@ -35,7 +35,7 @@ function isBookFolder(folderPath)
       if(file.isFile())
       {
         const ext = path.name.split('.').pop();
-        if(imageExtensions.includes(ext))
+        if(fileExtensions.image.includes(ext))
         {
           return true;
         }

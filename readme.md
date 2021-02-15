@@ -1,6 +1,8 @@
 # TODO
-작업 요청
+작업 큐
 https://github.com/OptimalBits/bull
+
+
 
 
 

@@ -1,5 +1,9 @@
 const path = require('path');
 
+/**
+ * environment variable BOOKSHELF_LOG or
+ * ./logs
+ */
 const logConfig = {
   dirname: path.resolve(
     process.env.BOOKSHELF_LOG || path.join(__dirname, '../logs')
@@ -8,10 +12,14 @@ const logConfig = {
   maxFiles: 15,
 }
 
-// absoulte path
+/**
+ * environment variable BOOKSHELF_DB or
+ * ./database
+ */
 const databaseDirectory = path.resolve(
   process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
 );
+
 
 const imageExtensions = [
   'jpg',
@@ -25,12 +33,12 @@ const imageExtensions = [
  * 
  * use with `new RegExp(item)`
  * 
- * folder, zip형식에서는 타겟이 만화인가 아닌가를 
+ * folder, zip형식에서는 타겟이 유효한가를 
  * 내용물의 확장자로 판단하는데, 이 과정을 건너 뛸 파일명을 명시
  * 
  * 예시
- * IFM1=[];
- * IFM2=['.\*info.\*'];
+ * IFN1=[];
+ * IFN2=['.\*info.\*'];
  * folder{
  *  1.jpg,
  *  2.jpg,
@@ -39,8 +47,8 @@ const imageExtensions = [
  *  info.txt
  * }; 일때,
  * 
- * IFM1이면 만화로 처리되지 않고,
- * IFM2이면 만화로 처리됨.
+ * IFN1이면 유효하게 처리되지 않고,
+ * IFN2이면 유효하게 처리됨.
  */
 const ignoreFileNames = [
   '.*readme.*',

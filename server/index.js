@@ -11,6 +11,7 @@ const Watcher = require('./scanner/Watcher');
 
 const expressApp = require('./server');
 
+require('./redis')
 
 class App{
   constructor(host='0.0.0.0', port=3456){
@@ -40,5 +41,3 @@ class App{
 }
 
 new App();
-
-//module.exports = App;

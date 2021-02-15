@@ -1,5 +1,13 @@
 const path = require('path');
 
+
+/**
+ * environment variable BOOKSHELF_REDIS_PORT or
+ * 63279
+ */
+const REDIS_PORT = Number(process.env.BOOKSHELF_REDIS_PORT) || 63279;
+
+
 /**
  * environment variable BOOKSHELF_LOG or
  * ./logs
@@ -20,12 +28,33 @@ const databaseDirectory = path.resolve(
   process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
 );
 
+/**
+ * 
+ */
+const fileExtensions = {
+  image: [
+    '.jpg',
+    '.gif',
+    '.png',
+  ],
 
-const imageExtensions = [
-  'jpg',
-  'gif',
-  'png',
-]
+  zip: [
+    '.zip',
+    '.cbz',
+  ],
+
+  text: [
+    '.txt',
+  ],
+
+  pdf: [
+    '.pdf',
+  ],
+
+  epub: [
+    '.epub',
+  ]
+}
 
 /**
  * When determining folder and zip type, 
@@ -69,9 +98,10 @@ const ignoreScanNames = [
 
 
 module.exports = {
+  REDIS_PORT,
   logConfig, 
   databaseDirectory,
-  imageExtensions,
+  fileExtensions,
   ignoreFileNames,
   ignoreScanNames,
 }

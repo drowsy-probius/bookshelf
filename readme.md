@@ -1,9 +1,6 @@
 # TODO
-작업 큐
+
 https://github.com/OptimalBits/bull
-
-
-
 
 
 index.js

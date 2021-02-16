@@ -31,7 +31,15 @@ const logConfig = {
  * {App root}/database
  */
 const databaseDirectory = path.resolve(
-  process.env.BOOKSHELF_DB || path.join(__dirname, '../../../database')
+  process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
+);
+
+/**
+ * environment variable BOOKSHELF_PLUGIN or 
+ * {App root}/plugins
+ */
+const pluginDirectory = path.resolve(
+  process.env.BOOKSHELF_PLUGIN || path.join(__dirname, '../plugins')
 );
 
 /**
@@ -109,6 +117,7 @@ module.exports = {
   redisPort,
   logConfig, 
   databaseDirectory,
+  pluginDirectory,
   fileExtensions,
   ignoreFileNames,
   ignoreScanNames,

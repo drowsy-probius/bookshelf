@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const {fileExtensions, ignoreFileNames} = require('../constants');
+const {fileExtensions, ignoreFileNames} = require('../../../config');
 
 
 function ignoreThis(fileName)

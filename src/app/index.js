@@ -1,13 +1,12 @@
 const path = require('path');
 
+const {loadScanner} = require('./plugins/scanner');
+
 const {logger} = require('./log');
-const {webHost, webPort} = require('./config');
+const {webHost, webPort} = require('../../config');
 
-const Database = require('./controller/database');
+const Database = require('./db');
 const database = new Database();
-
-const Scanner = require('./scanner/Scanner');
-const Watcher = require('./scanner/Watcher');
 
 const expressApp = require('../www');
 
@@ -15,6 +14,7 @@ require('./redis');
 
 class App{
   constructor(){
+    loadScanner();
     this.run(webHost, webPort)
   }
 
@@ -26,10 +26,6 @@ class App{
   }
 
   scan(folderPath){
-
-  }
-
-  watch(folderPath){
 
   }
 }

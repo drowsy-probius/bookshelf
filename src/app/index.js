@@ -1,6 +1,7 @@
 const path = require('path');
 
 const {logger} = require('./log');
+const {webHost, webPort} = require('./config');
 
 const Database = require('./controller/database');
 const database = new Database();
@@ -13,8 +14,8 @@ const expressApp = require('../www');
 require('./redis');
 
 class App{
-  constructor(host='0.0.0.0', port=3456){
-    this.run(host, port)
+  constructor(){
+    this.run(webHost, webPort)
   }
 
   run(host, port){

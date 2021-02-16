@@ -3,7 +3,7 @@ const path = require('path');
 
 const Book = require('../Book');
 const {resizePreview} = require('../image');
-const {imageExtensions} = require('../../../constants');
+const {imageExtensions} = require('../../../config');
 
 async function filteredData(filePath)
 {

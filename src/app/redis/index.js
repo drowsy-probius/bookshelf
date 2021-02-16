@@ -4,7 +4,7 @@ const path = require('path');
 
 const {logger} = require('../log');
 
-const {redisPort, databaseDirectory} = require('../constants');
+const {redisPort, databaseDirectory} = require('../config');
 
 try
 {

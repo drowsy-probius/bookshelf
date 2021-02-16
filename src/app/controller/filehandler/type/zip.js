@@ -2,7 +2,7 @@ const StreamZip = require('node-stream-zip');
 
 const Book = require('../Book');
 const {resizePreview} = require('../image');
-const {imageExtensions} = require('../../../constants');
+const {imageExtensions} = require('../../../config');
 
 function filteredData(filePath)
 {

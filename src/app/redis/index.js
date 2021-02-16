@@ -5,7 +5,6 @@ const path = require('path');
 const {logger} = require('../log');
 
 const {redisPort, databaseDirectory} = require('../constants');
-const { throws } = require('assert');
 
 try
 {

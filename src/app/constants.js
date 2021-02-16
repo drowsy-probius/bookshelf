@@ -10,11 +10,11 @@ const redisPort = process.env.BOOKSHELF_REDIS_PORT || 63279;
 
 /**
  * environment variable BOOKSHELF_LOG or
- * ./logs
+ * {App root}/logs
  */
 const logConfig = {
   dirname: path.resolve(
-    process.env.BOOKSHELF_LOG || path.join(__dirname, '../logs')
+    process.env.BOOKSHELF_LOG || path.join(__dirname, '../../logs')
   ),
   zippedArchive: false,
   maxFiles: 15,
@@ -22,10 +22,10 @@ const logConfig = {
 
 /**
  * environment variable BOOKSHELF_DB or
- * ./database
+ * {App root}/database
  */
 const databaseDirectory = path.resolve(
-  process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
+  process.env.BOOKSHELF_DB || path.join(__dirname, '../../database')
 );
 
 /**

@@ -1,5 +1,4 @@
 const path = require('path');
-const child_process = require('child_process');
 
 const {logger} = require('./log');
 
@@ -9,7 +8,7 @@ const database = new Database();
 const Scanner = require('./scanner/Scanner');
 const Watcher = require('./scanner/Watcher');
 
-const expressApp = require('./server');
+const expressApp = require('../www');
 
 require('./redis');
 
@@ -26,17 +25,11 @@ class App{
   }
 
   scan(folderPath){
-    const scanWorker = child_process.fork(Scanner, folderPath);
-    scanWorker.on('close', (code) => {
-      logger.info('scan job exited with code: ' + code);
-    });
+
   }
 
   watch(folderPath){
-    const watchWorker = child_process.fork(Watcher, folderPath);
-    watchWorker.on('close', (code) => {
-      logger.info('watch job exited with code: ' + code)
-    });
+
   }
 }
 

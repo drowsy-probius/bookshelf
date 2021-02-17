@@ -1,59 +1,96 @@
 const fs = require('fs');
 const path = require('path');
 
-const {fileExtensions, ignoreFileNames} = require('../../../config');
+const {fileExtensions, ignoreFileNames, ignoreScanNames} = require('./constants');
 
-
-function ignoreThis(fileName)
+function getAllFileExtensions()
 {
+  const extensions = [];
+  for(let i in fileExtensions)
+  {
+    fileExtensions[i].forEach((ext) => {
+      extensions.push(ext);
+    })
+  }
+  return extensions;
+}
+
+function doCount(pathORfilename)
+{
+  if(ignoreFileNames.length === 0)
+  {
+    return true;
+  }
+
+  const filename = pathORfilename.split('/').pop();
+
   ignoreFileNames.forEach((ignoreName) => {
     const ignoreRegexp = new RegExp(ignoreName);
-    if(fileName.search(ignoreRegexp) !== -1)
+    if(filename.search(ignoreRegexp) !== -1)
     {
-      return true
+      return false;
     }
   });
-  return false;
+  return true;
+}
+
+function doScan(pathORfilename)
+{
+  if(ignoreScanNames.length === 0)
+  {
+    return true;
+  }
+  
+  const filename = pathORfilename.split('/').pop();
+
+  ignoreScanNames.forEach((ignoreScanName) => {
+    const ignoreScanNameRegexp = new RegExp(ignoreScanName);
+    if(filename.search(ignoreScanNameRegexp) !== -1)
+    {
+      return false;
+    }
+  });
+  return true;
 }
 
 
 function isBookFolder(folderPath)
 {
-  fs.promises.readdir(folderPath, {withFileTypes: true})
-  .then((files) => {
-    files.forEach((file) => {
-      if(ignoreThis(file.name))
-      {
-        continue;
-      }
-  
-      if(file.isDirectory())
+  const files = fs.readdirSync(folderPath, {withFileTypes: true});
+
+  for(let i=0; i<files.length; i++)
+  {
+    const file = files[i];
+
+    if(file.isDirectory())
+    {
+      return false;
+    }
+    else if(!doCount(file.name))
+    {
+      continue;
+    }
+    else if(file.isFile())
+    {
+      const ext = path.extname(file.name);
+
+      if(!fileExtensions.image.includes(ext))
       {
         return false;
       }
-      
-      if(file.isFile())
-      {
-        const ext = path.name.split('.').pop();
-        if(fileExtensions.image.includes(ext))
-        {
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      
+    }
+    else
+    {
       return false;
-    })
-  })
-  .catch((e) => {
-    return false;
-  })
+    }
+  }
+
+  return true;
 } 
 
 module.exports = {
-  ignoreThis,
+  getAllFileExtensions,
+  doCount,
+  doScan,
   isBookFolder,
 }

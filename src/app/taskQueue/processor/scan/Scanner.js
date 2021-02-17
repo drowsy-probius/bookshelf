@@ -9,6 +9,11 @@ class Scanner {
   {
     this.root = path.resolve(folderPath);
     this.scan = scanners[scannerName];
+    this.logger = logger;
+    this.result = {};
+    this.start = new Date().getTime();
+    this.end = Infinity;
+    
     this.scan.bind(this);
   }
 }

@@ -9,7 +9,7 @@ const {redisPort, databaseDirectory} = require('../config');
 try
 {
   /**
-   * Ubuntu install
+   * for Ubuntu,
    * sudo apt install redis-server
    */
   const redisBinary = execSync('redis-server --version');

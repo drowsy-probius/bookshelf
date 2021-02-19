@@ -1,6 +1,6 @@
 const path = require('path');
 
-const {logger} = require('./log');
+const logger = require('./log').loggerWrapper(module);
 const {webHost, webPort} = require('../../config');
 
 const expressApp = require('../www');
@@ -16,7 +16,7 @@ class App{
 
   run(host, port){
     expressApp.listen(port, host, ()=>{
-      logger.info(`Server listening on ${host}:${port}`, {filename: __filename});
+      logger.info(`Server listening on ${host}:${port}`);
     });
 
   }

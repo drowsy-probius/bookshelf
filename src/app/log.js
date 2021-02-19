@@ -1,3 +1,5 @@
+const path = require('path');
+
 const winston = require('winston');
 const winstonDaily = require('winston-daily-rotate-file');
 
@@ -5,26 +7,13 @@ const {logConfig} = require('../../config');
 
 const {createLogger, format, transports} = winston;
 
+const APP_ROOT = path.resolve(__dirname, '../../');
+
 const logFormatPrintf = format.printf((info) => {
-  let format = info.timestamp + ' [' + info.level + ']';
-
-  if(info.metadata.filename)
-  {
-    format += ' [' + info.metadata.filename + ']';
-  }
-
-  if(typeof info.message === 'object')
-  {
-    info.message = JSON.stringify(info.message, null, 2)
-  }
-  
-  format += ': ' + info.message;
-
-  return format;
+  return `${info.timestamp} [${info.level}] ${info.message}`
 });
 
 const loggerFormat = format.combine(
-  format.metadata(),
   format.timestamp({
     format: 'YYYY-MM-DD HH:mm:ss',
   }),
@@ -100,10 +89,64 @@ const loggerStream = {
   }
 }
 
+const loggerDatabase = (message) => {logger.debug(message, {filename: 'sqlite3'})}
+
+
+/**
+ * log level
+ * { error: 0, warn: 1, info: 2, verbose: 3, debug: 4, silly: 5 }} module 
+ */
+function loggerWrapper(module)
+{
+  let filename = module.filename;
+  if(!module.relative)
+  {
+    filename = path.relative(APP_ROOT, filename)
+  }
+  function format(msg)
+  {
+    if(typeof(msg) === 'object')
+    {
+      msg = JSON.stringify(msg, null, 2);
+    }
+    return `[${filename}]: ${msg}`
+  }
+
+  return {
+    error: function(msg, info)
+    {
+      logger.error(format(msg), info)
+    },
+    warn: function(msg, info)
+    {
+      logger.warn(format(msg), info)
+    },
+    info: function(msg, info)
+    {
+      logger.info(format(msg), info)
+    },
+    verbose: function(msg, info)
+    {
+      logger.verbose(format(msg), info)
+    },
+    debug: function(msg, info)
+    {
+      logger.debug(format(msg), info)
+    },
+    silly: function(msg, info)
+    {
+      logger.silly(format(msg), info)
+    },
+  }
+}
+
 
 if(process.env.NODE_ENV !== 'production'){
   logger.add(loggerTransportDev);
 }
 
-
-module.exports = {logger, loggerStream};
+module.exports = {
+  loggerWrapper,
+  loggerStream,
+  loggerDatabase,
+};

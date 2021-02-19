@@ -1,7 +1,5 @@
 const fs = require('fs');
 
-const {logger} = require('../../../log');
-
 const {scanners} = require('../../../plugins/scanner');
 
 /**
@@ -27,7 +25,7 @@ class Scanner {
 
     this.root = library;
     this.scan = scanners[scannerName];
-    this.logger = logger;
+    this.logger = require('../../../log').loggerWrapper({filename: 'custom scanner: ' + scannerName, relative: true});
     this.result = [];
     this.start = new Date().getTime();
     this.end = Infinity;

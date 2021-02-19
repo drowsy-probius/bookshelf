@@ -1,4 +1,4 @@
-const {logger} = require('../log');
+const logger = require('../log').loggerWrapper(module);
 const {bookshelf} = require('../db');
 const scanQueue = require('./processor/scan');
 const dbQueue = require('./processor/db');
@@ -20,7 +20,7 @@ scanQueue.on('completed', (job, result) => {
 });
 
 dbQueue.on('error', (error) => {
-  logger.error(error, {filename: __filename})
+  logger.error(error)
 });
 
 dbQueue.on('completed', (job, result) => {

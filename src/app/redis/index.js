@@ -2,7 +2,7 @@ const {spawn, execSync} = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const {logger} = require('../log');
+const logger = require('../log').loggerWrapper(module);
 
 const {redisPort, databaseDirectory} = require('../../../config');
 

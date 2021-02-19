@@ -23,7 +23,7 @@ function loadScanner(){
       try
       {
         scanners[pluginDirectory.name] = require(pluginPath);
-        logger.info('scanner plugin added: ' + pluginPath);
+        logger.info('scanner plugin added: ' + pluginDirectory.name + ' [' + pluginPath + ']');
       }
       catch(e)
       {

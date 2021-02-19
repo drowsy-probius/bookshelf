@@ -1,5 +1,9 @@
 # TODO
 
+##
+- db로직
+- 프론트 만들어서 제대로 나오는지 테스트하기
+
 ## backend
 
 plugins/agent 완성하기

@@ -5,9 +5,8 @@ const {redisPort} = require('../../../../../config');
 const queueOptions = {
   redis: {port: redisPort, host: '127.0.0.1'},
 }
+const dbQueue = new Queue('database', queueOptions);
 
-const scanQueue = new Queue('scanLibrary', queueOptions);
+dbQueue.process(2, path.resolve(path.join(__dirname, './processor.js')))
 
-scanQueue.process(5, path.resolve(path.join(__dirname, './processor.js')))
-
-module.exports = scanQueue;
+module.exports = dbQueue;

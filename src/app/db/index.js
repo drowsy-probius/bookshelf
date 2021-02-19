@@ -4,13 +4,20 @@ const BetterSqlite3 = require('better-sqlite3');
 const {databaseDirectory} = require('../../../config');
 const {logger} = require('../log');
 
-class Database {
-  constructor(){
-    this.directory = databaseDirectory;
-    this.path = path.join(this.directory, 'bookshelf.db');
-    !fs.existsSync(this.directory) && fs.mkdirSync(this.directory, {recursive: true});
-    this.db = BetterSqlite3(this.path, {verbose: logger.debug});
-  }
-}
+!fs.existsSync(databaseDirectory) && fs.mkdirSync(databaseDirectory, {recursive: true});
 
-module.exports = Database;
+const bookshelfPath = path.join(databaseDirectory, 'bookshelf.db');
+
+let bookshelf = BetterSqlite3(bookshelfPath, {verbose: logger.debug});
+
+/**
+ * create tables
+ */
+bookshelf.prepare(`CREATE TABLE IF NOT EXISTS library(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  path TEXT NOT NULL,
+  type TEXT NOT NULL )`).run();
+
+module.exports = {
+  bookshelf
+}

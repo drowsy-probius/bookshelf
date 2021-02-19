@@ -1,22 +1,30 @@
 const winston = require('winston');
 const winstonDaily = require('winston-daily-rotate-file');
-const path = require('path');
 
 const {logConfig} = require('../../config');
 
 const {createLogger, format, transports} = winston;
 
-
 const logFormatPrintf = format.printf((info) => {
+  let format = info.timestamp + ' [' + info.level + ']';
+
+  if(info.metadata.filename)
+  {
+    format += ' [' + info.metadata.filename + ']';
+  }
+
   if(typeof info.message === 'object')
   {
     info.message = JSON.stringify(info.message, null, 2)
   }
-  return `${info.timestamp} ${('['+info.level+'] '+'['+info.label+']').padEnd(24, ' ')} : ${info.message}`;
+  
+  format += ': ' + info.message;
+
+  return format;
 });
 
 const loggerFormat = format.combine(
-  format.label({label: path.basename(require.main.filename)}),
+  format.metadata(),
   format.timestamp({
     format: 'YYYY-MM-DD HH:mm:ss',
   }),
@@ -53,6 +61,7 @@ const loggerTransportDebug = new winstonDaily({
 });
 
 const loggerTransportDev = new transports.Console({
+  level: 'silly',
   format: format.combine(
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',

@@ -28,10 +28,10 @@ module.exports = async function scan(){
       {
         if(isBookFolder(fileAbsolutePath))
         {
-          result[fileAbsolutePath] = {
+          result.push({
             path: fileAbsolutePath,
             type: 'folder',
-          }
+          })
         }
         else
         {
@@ -48,7 +48,7 @@ module.exports = async function scan(){
 
         if(!fileExtensions.includes(ext))
         {
-          logger.info('not supported file: ' + fileAbsolutePath)
+          logger.debug('not supported file: ' + fileAbsolutePath)
           continue;
         }
 
@@ -57,10 +57,10 @@ module.exports = async function scan(){
           continue;
         }
 
-        result[fileAbsolutePath] = {
+        result.push({
           path: fileAbsolutePath,
           type: ext,
-        }
+        })
       }
     }
     this.end = new Date().getTime();

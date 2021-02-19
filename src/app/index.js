@@ -1,33 +1,32 @@
 const path = require('path');
 
-const {loadScanner} = require('./plugins/scanner');
-
 const {logger} = require('./log');
 const {webHost, webPort} = require('../../config');
 
-const Database = require('./db');
-const database = new Database();
-
 const expressApp = require('../www');
+const processor = require('./taskQueue');
+
 
 require('./redis');
 
 class App{
   constructor(){
-    loadScanner();
     this.run(webHost, webPort)
   }
 
   run(host, port){
     expressApp.listen(port, host, ()=>{
-      logger.info(`Server listening on ${host}:${port}`);
+      logger.info(`Server listening on ${host}:${port}`, {filename: __filename});
     });
 
   }
 
   scan(folderPath){
-
+    this.scanQueue = processor.scanQueue;
+    this.scanQueue.add({path: path.resolve(__dirname, folderPath), scanner: 'default'});
   }
 }
 
-new App();
+const app = new App();
+app.scan('../../books');
+

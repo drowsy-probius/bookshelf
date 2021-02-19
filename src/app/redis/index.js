@@ -4,7 +4,7 @@ const path = require('path');
 
 const {logger} = require('../log');
 
-const {redisPort, databaseDirectory} = require('../config');
+const {redisPort, databaseDirectory} = require('../../../config');
 
 try
 {
@@ -13,7 +13,7 @@ try
    * sudo apt install redis-server
    */
   const redisBinary = execSync('redis-server --version');
-  logger.info(redisBinary)
+  logger.debug('[redis]' + redisBinary.toString())
 
   const redisDirectory = path.join(databaseDirectory, 'redis');
   !fs.existsSync(redisDirectory) && fs.mkdirSync(redisDirectory, {recursive: true});
@@ -23,7 +23,7 @@ try
   '--dir', redisDirectory, '--always-show-logo', 'no'])
 
   redisServer.stdout.on('data', (stdout) => {
-    logger.info('[redis] '+stdout);
+    logger.debug('[redis] '+stdout);
   })
 
   redisServer.stderr.on('data', (stderr) => {

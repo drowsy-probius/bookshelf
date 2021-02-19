@@ -1,4 +1,3 @@
-const path = require('path');
 const fs = require('fs');
 
 const {logger} = require('../../../log');
@@ -6,19 +5,19 @@ const {logger} = require('../../../log');
 const {scanners} = require('../../../plugins/scanner');
 
 /**
- * new Scanner(validDirectoryPath, validScannerName)
+ * new Scanner(validAbsoluteDirectoryPath, validscanner)
  */
 class Scanner {
-  constructor(folderPath, scannerName)
+  constructor(library, scannerName)
   {
-    if(fs.existsSync(path.resolve(folderPath)) === false)
+    if(fs.existsSync(library) === false)
     {
-      throw new Error('[' + path.resolve(folderPath) + '] does not exists!');
+      throw new Error('[' + library + '] does not exists!');
     }
 
-    if(fs.statSync(path.resolve(folderPath)).isDirectory() === false)
+    if(fs.statSync(library).isDirectory() === false)
     {
-      throw new Error('[' + path.resolve(folderPath) + '] is not a directory!');
+      throw new Error('[' + library + '] is not a directory!');
     }
 
     if(scanners[scannerName] === undefined)
@@ -26,10 +25,10 @@ class Scanner {
       throw new Error('[' + scannerName + '] scanner does not exist!')
     }
 
-    this.root = path.resolve(folderPath);
+    this.root = library;
     this.scan = scanners[scannerName];
     this.logger = logger;
-    this.result = {};
+    this.result = [];
     this.start = new Date().getTime();
     this.end = Infinity;
     

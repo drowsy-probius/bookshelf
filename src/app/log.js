@@ -9,6 +9,9 @@ const {createLogger, format, transports} = winston;
 
 const APP_ROOT = path.resolve(__dirname, '../../');
 
+const logLevels = ['error', 'warn', 'info', 'verbose', 'debug', 'silly'];
+
+
 const logFormatPrintf = format.printf((info) => {
   return `${info.timestamp} [${info.level}] ${info.message}`
 });
@@ -85,24 +88,35 @@ const logger = createLogger({
 
 const loggerStream = {
   write: (message) => {
+    if(typeof(message) === 'object')
+    {
+      message = JSON.stringify(message);
+    }
+    message = '[expressApp]: ' + message;
+
     logger.info(message)
   }
 }
 
-const loggerDatabase = (message) => {logger.debug(message, {filename: 'sqlite3'})}
+const loggerDatabase = (message) => {logger.debug(message, {filename: 'sqlite3', notFilePath: true})}
 
 
 /**
+ * @brief logger.info(message, module)
+ * 만약 logger에 파일 경로 말고 다른 이름 넣고싶으면 module 대신에
+ * {filename: 'name', notFilePath: true}로 넣으면 이름만 로그에 찍힘
+ * 
  * log level
  * { error: 0, warn: 1, info: 2, verbose: 3, debug: 4, silly: 5 }} module 
  */
 function loggerWrapper(module)
 {
   let filename = module.filename;
-  if(!module.relative)
+  if(!module.notFilePath)
   {
     filename = path.relative(APP_ROOT, filename)
   }
+
   function format(msg)
   {
     if(typeof(msg) === 'object')
@@ -112,32 +126,15 @@ function loggerWrapper(module)
     return `[${filename}]: ${msg}`
   }
 
-  return {
-    error: function(msg, info)
-    {
-      logger.error(format(msg), info)
-    },
-    warn: function(msg, info)
-    {
-      logger.warn(format(msg), info)
-    },
-    info: function(msg, info)
-    {
-      logger.info(format(msg), info)
-    },
-    verbose: function(msg, info)
-    {
-      logger.verbose(format(msg), info)
-    },
-    debug: function(msg, info)
-    {
-      logger.debug(format(msg), info)
-    },
-    silly: function(msg, info)
-    {
-      logger.silly(format(msg), info)
-    },
+  const loggerWrapperObject = {}
+  for(const level of logLevels)
+  {
+    loggerWrapperObject[level] = function(message, info){
+      logger[level](format(message), info)
+    }
   }
+  
+  return loggerWrapperObject;
 }
 
 

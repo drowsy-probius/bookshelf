@@ -26,6 +26,14 @@ const logConfig = {
   maxFiles: 15,
 }
 
+const timeZone = (()=>{
+  const offset = -(new Date().getTimezoneOffset());
+  const str = (offset >= 0 ? '+' : '-') +
+              Number(offset/60).toString().padStart(2, '0') + ':' + 
+              Number(offset%60).toString().padStart(2, '0');
+  return str;
+})();
+
 /**
  * environment variable BOOKSHELF_DB or
  * {App root}/database
@@ -48,6 +56,7 @@ module.exports = {
   webHost,
   webPort,
   redisPort,
+  timeZone,
   logConfig, 
   databaseDirectory,
   pluginDirectory,

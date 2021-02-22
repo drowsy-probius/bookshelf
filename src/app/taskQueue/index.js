@@ -1,9 +1,7 @@
 const logger = require('../log').loggerWrapper(module);
-const {bookshelf} = require('../db');
-const scanQueue = require('./processor/scan');
-const dbQueue = require('./processor/db');
 
-const insertScanResult = bookshelf.prepare('INSERT INTO library (path, type) VALUES (@path, @type)');
+const scanQueue = require('./processor/scan');
+const {dbQueue, insertScannerResult} = require('./processor/db');
 
 scanQueue.on('error', (error) => {
   logger.error(error)
@@ -11,12 +9,10 @@ scanQueue.on('error', (error) => {
 
 scanQueue.on('completed', (job, result) => {
   logger.info('scan job done: ')
-  logger.info(job.data)
+  // logger.info(job.data)
 
-  for(let i=0; i<result.length; i++)
-  {
-    dbQueue.add({func: function(){insertScanResult.run(result[i]); console.log(result[i])}})
-  }
+  insertScannerResult(result)
+  //dbQueue.add({query: 'SELECT * FROM library LIMIT 10'})
 });
 
 dbQueue.on('error', (error) => {
@@ -24,7 +20,7 @@ dbQueue.on('error', (error) => {
 });
 
 dbQueue.on('completed', (job, result) => {
-  logger.info(job.data)
+  // logger.info(job.data)
   logger.info(result);
 })
 

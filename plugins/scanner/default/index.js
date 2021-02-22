@@ -31,6 +31,7 @@ module.exports = async function scan(){
           result.push({
             path: fileAbsolutePath,
             type: 'folder',
+            time: new Date().getTime(),
           })
         }
         else
@@ -60,6 +61,7 @@ module.exports = async function scan(){
         result.push({
           path: fileAbsolutePath,
           type: ext,
+          time: new Date().getTime(),
         })
       }
     }

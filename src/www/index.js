@@ -24,7 +24,7 @@ expressApp.use(session({
   saveUninitialized: true,
 }));
 
-expressApp.use('/', router);
+expressApp.use('/api', router);
 
 expressApp.use((req, res, next) => {
   next(createError(404))
@@ -39,6 +39,5 @@ expressApp.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send(`${err.message} ${err.status}<br>${err.stack}`);
 })
-
 
 module.exports = expressApp;

@@ -8,6 +8,11 @@ function getAllFileExtensions()
   const extensions = [];
   for(let i in fileExtensions)
   {
+    if(i === 'image')
+    {
+      continue;
+    }
+    
     fileExtensions[i].forEach((ext) => {
       extensions.push(ext);
     })
@@ -66,11 +71,13 @@ function isBookFolder(folderPath)
     {
       return false;
     }
-    else if(!doCount(file.name))
+    
+    if(!doCount(file.name))
     {
       continue;
     }
-    else if(file.isFile())
+    
+    if(file.isFile())
     {
       const ext = path.extname(file.name);
 
@@ -79,10 +86,7 @@ function isBookFolder(folderPath)
         return false;
       }
     }
-    else
-    {
-      return false;
-    }
+
   }
 
   return true;

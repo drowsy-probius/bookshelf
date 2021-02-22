@@ -11,6 +11,27 @@ Any file in 'scanner' folder will be ignored.
 template
 ```javascript
 module.export = function scan(){
+  // target directory
+  this.root 
+  
+  /**
+   * logger.info(msg, {filename: __filename__})
+   * logger.debug(...)
+   * logger.error(...)
+   */
+  this.logger
+
+  /*
+   * scan result 
+   * object[
+   *  {
+   *    path: absolutePath,
+   *    type: '...'
+   *  }
+   * ]
+   */
+  this.result
+
   // do magic!
 }
 ```

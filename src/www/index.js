@@ -4,7 +4,7 @@ const session = require('express-session');
 const path = require('path');
 
 const morganLogger = require('morgan');
-const {loggerStream} = require('../app/log');
+const {loggerStream} = require('../log');
 
 const router = require('./router');
 

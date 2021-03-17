@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const logger = require('../../log').loggerWrapper(module);
+const logger = require('../../../log').loggerWrapper(module);
 
 const {pluginDirectory} = require('../../../../config');
 

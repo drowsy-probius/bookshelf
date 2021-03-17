@@ -1,4 +1,4 @@
-const logger = require('../log').loggerWrapper(module);
+const logger = require('../../log').loggerWrapper(module);
 
 const scanQueue = require('./processor/scan');
 const {dbQueue, insertScannerResult} = require('./processor/db');

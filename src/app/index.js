@@ -1,6 +1,6 @@
 const path = require('path');
 
-const logger = require('./log').loggerWrapper(module);
+const logger = require('../log').loggerWrapper(module);
 const {webHost, webPort} = require('../../config');
 
 const expressApp = require('../www');

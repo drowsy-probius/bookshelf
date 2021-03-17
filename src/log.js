@@ -3,7 +3,7 @@ const path = require('path');
 const winston = require('winston');
 const winstonDaily = require('winston-daily-rotate-file');
 
-const {logConfig} = require('../../config');
+const {logConfig} = require('../config');
 
 const {createLogger, format, transports} = winston;
 

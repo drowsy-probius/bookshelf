@@ -1,4 +1,4 @@
-const logger = require('../../../log').loggerWrapper(module);
+const logger = require('../../../../log').loggerWrapper(module);
 const Scanner = require('./Scanner');
 
 function processor(job, done)

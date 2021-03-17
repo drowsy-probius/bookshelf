@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const BetterSqlite3 = require('better-sqlite3');
 const {databaseDirectory} = require('../../../../../config');
-const {loggerDatabase} = require('../../../../app/log');
+const {loggerDatabase} = require('../../../../log');
 
 !fs.existsSync(databaseDirectory) && fs.mkdirSync(databaseDirectory, {recursive: true});
 

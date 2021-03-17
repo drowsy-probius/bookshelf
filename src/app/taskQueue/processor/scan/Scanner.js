@@ -25,7 +25,7 @@ class Scanner {
 
     this.root = library;
     this.scan = scanners[scannerName];
-    this.logger = require('../../../log').loggerWrapper({filename: 'custom scanner: ' + scannerName, notFilePath: true});
+    this.logger = require('../../../../log').loggerWrapper({filename: 'custom scanner: ' + scannerName, notFilePath: true});
     this.result = [];
     this.start = new Date().getTime();
     this.end = Infinity;

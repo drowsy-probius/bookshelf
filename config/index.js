@@ -1,5 +1,8 @@
 const path = require('path');
 
+
+const absoluteDirname = path.resolve(__dirname);
+
 /**
  * environment variable BOOKSHELF_HOST, BOOKSHELF_PORT or
  * '0.0.0.0', 3456
@@ -13,14 +16,15 @@ const webPort = process.env.BOOKSHELF_PORT || 3456;
  */
 const redisPort = process.env.BOOKSHELF_REDIS_PORT || 63279;
 
-
 /**
+ * logConfig for winston module
+ * 
  * environment variable BOOKSHELF_LOG or
  * {App root}/logs
  */
 const logConfig = {
   dirname: path.resolve(
-    process.env.BOOKSHELF_LOG || path.join(__dirname, '../logs')
+    process.env.BOOKSHELF_LOG || path.join(absoluteDirname, '../logs')
   ),
   zippedArchive: false,
   maxFiles: 15,
@@ -45,7 +49,7 @@ const timeZone = (()=>{
  * {App root}/database
  */
 const databaseDirectory = path.resolve(
-  process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
+  process.env.BOOKSHELF_DB || path.join(absoluteDirname, '../database')
 );
 
 
@@ -54,7 +58,7 @@ const databaseDirectory = path.resolve(
  * {App root}/plugins
  */
 const pluginDirectory = path.resolve(
-  process.env.BOOKSHELF_PLUGIN || path.join(__dirname, '../plugins')
+  process.env.BOOKSHELF_PLUGIN || path.join(absoluteDirname, '../plugins')
 );
 
 

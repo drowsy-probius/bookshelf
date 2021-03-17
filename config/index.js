@@ -26,6 +26,11 @@ const logConfig = {
   maxFiles: 15,
 }
 
+
+/**
+ * return String
+ * -09:00, +01:00, etc...
+ */
 const timeZone = (()=>{
   const offset = -(new Date().getTimezoneOffset());
   const str = (offset >= 0 ? '+' : '-') +
@@ -33,6 +38,7 @@ const timeZone = (()=>{
               Number(offset%60).toString().padStart(2, '0');
   return str;
 })();
+
 
 /**
  * environment variable BOOKSHELF_DB or
@@ -42,6 +48,7 @@ const databaseDirectory = path.resolve(
   process.env.BOOKSHELF_DB || path.join(__dirname, '../database')
 );
 
+
 /**
  * environment variable BOOKSHELF_PLUGIN or 
  * {App root}/plugins
@@ -49,7 +56,6 @@ const databaseDirectory = path.resolve(
 const pluginDirectory = path.resolve(
   process.env.BOOKSHELF_PLUGIN || path.join(__dirname, '../plugins')
 );
-
 
 
 module.exports = {

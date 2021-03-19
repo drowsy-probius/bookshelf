@@ -1,10 +1,14 @@
+const fs = require('fs');
+
 class WorkerQueue{
-  constructor(workFunction, interval)
+  constructor(workFunction, interval, jsonFilePath)
   {
     this.q = [];
-    this.interval = interval
+    this.interval = interval;
+    this.jsonFilePath = jsonFilePath;
+    this.workFuntion = workFunction;
     this.repeat = setInterval(() => {
-      this.work(workFunction);
+      this.work();
     }, this.interval)
   }
   
@@ -35,11 +39,28 @@ class WorkerQueue{
     return this.q.length == 0
   }
 
-  work(workFunction)
+  reload()
+  {
+    if (fs.existsSync(this.jsonFilePath))
+    {
+      const json = fs.readFileSync(this.jsonFilePath);
+      this.q = JSON.parse(json);
+    }
+  }
+
+  save()
+  {
+    const jsonString = JSON.stringify(this.q);
+    fs.writeFile(this.jsonFilePath, jsonString, (err) => {
+      if(err) throw err;
+    })
+  }
+
+  work()
   {
     const job = this.q.top();
     this.q.pop();
-    workFunction(job);
+    this.workFunction(job);
   }
 }
 

@@ -25,7 +25,6 @@ dbQueue.on('completed', (job, result) => {
 })
 
 
-
 module.exports = {
   scanQueue,
   dbQueue,

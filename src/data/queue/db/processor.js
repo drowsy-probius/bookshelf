@@ -1,4 +1,4 @@
-const {bookshelf} = require('../../../db');
+const {bookshelf} = require('../../../../app/db');
 
 function isQueryReturnsData(rawQuery)
 {

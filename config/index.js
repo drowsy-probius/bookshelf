@@ -62,6 +62,15 @@ const pluginDirectory = path.resolve(
 );
 
 
+/**
+ * environment variable BOOKSHELF_METADATA or
+ * {App root}/Metadata
+ */
+const metadataDirectory = path.resolve(
+  process.env.BOOKSHELF_METADATA || path.join(absoluteDirname, '../Metadata')
+);
+
+
 module.exports = {
   webHost,
   webPort,
@@ -70,4 +79,5 @@ module.exports = {
   logConfig, 
   databaseDirectory,
   pluginDirectory,
+  metadataDirectory,
 }

@@ -38,6 +38,7 @@ expressApp.use((err, req, res, next) => {
   /** error page */
   res.status(err.status || 500);
   res.send(`${err.message} ${err.status}<br>${err.stack}`);
-})
+});
+
 
 module.exports = expressApp;

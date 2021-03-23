@@ -4,3 +4,5 @@
  * 2. execute client-app and server-app
  * 
  */
+
+require('../src');

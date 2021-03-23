@@ -1,6 +1,6 @@
 function processor(job)
 {
-  console.log('database')
+  console.log('agent');
 }
 
 module.exports = processor;

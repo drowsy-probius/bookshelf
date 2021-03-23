@@ -1,13 +1,14 @@
 const fs = require('fs');
 
 class WorkerQueue{
-  constructor(workFunction, interval, jsonFilePath)
+  constructor(workFunction, jsonFilePath, interval=1000)
   {
     this.q = [];
     this.interval = interval;
     this.jsonFilePath = jsonFilePath;
-    this.workFuntion = workFunction;
+    this.workFunction = workFunction;
     this.repeat = setInterval(() => {
+      this.save();
       this.work();
     }, this.interval)
   }
@@ -52,15 +53,21 @@ class WorkerQueue{
   {
     const jsonString = JSON.stringify(this.q);
     fs.writeFile(this.jsonFilePath, jsonString, (err) => {
-      if(err) throw err;
+      if(err)
+      {
+        throw err;
+      }
     })
   }
 
   work()
   {
-    const job = this.q.top();
-    this.q.pop();
-    this.workFunction(job);
+    if(!this.empty())
+    {
+      const job = this.top();
+      this.pop();
+      this.workFunction(job);
+    }
   }
 }
 

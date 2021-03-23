@@ -1,11 +1,7 @@
 const path = require('path');
 const WorkerQueue = require('../WorkerQueue');
+const {scanner} = require('../../processor');
 
-function somework(job)
-{
-  console.log(job);
-}
-
-const scannerQueue = new WorkerQueue(somework, 1000, path.resolve(__dirname, 'scanner.json'));
+const scannerQueue = new WorkerQueue(scanner, path.resolve(__dirname, 'scanner.json'));
 
 module.exports = scannerQueue;

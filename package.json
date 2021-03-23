@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./bin/start",
-    "start:dev": "nodemon ./bin/start"
+    "start:dev": "nodemon ./bin/start --ignore '**/*.json' --ignore readmd.*"
   },
   "dependencies": {
     "better-sqlite3": "^7.1.2",

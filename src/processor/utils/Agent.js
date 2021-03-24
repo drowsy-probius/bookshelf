@@ -13,7 +13,7 @@ class Agent
 
     this.work = PluginAgents.plugins[agentName];
     this.logger = require('../../log').loggerWrapper({filename: `custom agent: ${agentName}`, notFilePath: true});
-    this.result = [];
+    this.result = {};
     this.start = new Date().getTime();
     this.end = Infinity;
 

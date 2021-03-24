@@ -1,7 +1,14 @@
 const path = require('path');
 
-
 const absoluteDirname = path.resolve(__dirname);
+
+/**
+ * environment variable BOOKSHELF_LIBRARY or
+ * {App root}/books
+ */
+const libraryDirectory = path.resolve(
+  process.env.BOOKSHELF_LIBRARY || path.join(absoluteDirname, '../books')
+);
 
 /**
  * environment variable BOOKSHELF_HOST, BOOKSHELF_PORT or

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const logger = require('../log').loggerWrapper(module);
-const {pluginDirectory} = require('../../config');
+const logger = require('../../log').loggerWrapper(module);
+const {pluginDirectory} = require('../../../config');
 
 /**
  * 'agent', 'scanner'

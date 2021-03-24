@@ -4,7 +4,7 @@ class Scanner
 {
   constructor(library, scannerName)
   {
-    const {PluginScanners} = require('./utils');
+    const {PluginScanners} = require('..');
 
     if(fs.existsSync(library) === false)
     {
@@ -23,7 +23,7 @@ class Scanner
 
     this.root = library;
     this.work = PluginScanners.plugins[scannerName];
-    this.logger = require('../log').loggerWrapper({filename:`custom scanner: ${scannerName}`, notFilePath: true});
+    this.logger = require('../../log').loggerWrapper({filename:`custom scanner: ${scannerName}`, notFilePath: true});
     this.result = [];
     this.start = new Date().getTime();
     this.end = Infinity;

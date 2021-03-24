@@ -1,5 +1,5 @@
-const {PluginScanners} = require('../utils')
-const {Scanner} = require('../');
+const {PluginScanners} = require('../')
+const Scanner = require('../utils/Scanner');
 
 /**
  * @param {Object} job {path: path.string, scanner: scannerName}
@@ -16,6 +16,7 @@ function processor(job)
       const scanner = new Scanner(library, scannerName);
       scanner.work()
       .then(()=>{
+        console.log(scanner.result);
         resolve(scanner.resuslt);
       })
     }

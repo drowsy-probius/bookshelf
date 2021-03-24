@@ -1,7 +1,14 @@
-const Agent = require('./Agent');
-const Scanner = require('./Scanner');
+const database = require('./database');
+const agent = require('./library/agent');
+const scanner = require('./library/scanner');
+const PluginLoader = require('./utils/PluginLoader');
+const PluginAgents = new PluginLoader('agent');
+const PluginScanners = new PluginLoader('scanner');
 
 module.exports = {
-  Agent,
-  Scanner,
+  database,
+  agent,
+  scanner,
+  PluginAgents,
+  PluginScanners,
 }

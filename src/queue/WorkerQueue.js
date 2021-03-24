@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { type } = require('os');
 
 class WorkerQueue{
   constructor(workFunction, jsonFilePath, interval=1000)
@@ -72,12 +73,12 @@ class WorkerQueue{
     {
       const job = this.top();
       this.pop();
-      console.log(`before ${job}: ${this.currentJobs}`); /** debug code */
+      console.log(`before ${JSON.stringify(job)}: ${this.currentJobs}`); /** debug code */
       this.currentJobs += 1;
       this.workFunction(job)
       .then(()=>{
         this.currentJobs += -1;
-        console.log(`after ${job}: ${this.currentJobs}`); /** debug code */
+        console.log(`after ${JSON.stringify(job)}: ${this.currentJobs}`); /** debug code */
       })
     }
   }

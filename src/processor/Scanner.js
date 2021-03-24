@@ -1,10 +1,11 @@
 const fs = require('fs');
-const {PluginScanners} = require('.');
 
 class Scanner
 {
   constructor(library, scannerName)
   {
+    const {PluginScanners} = require('./utils');
+
     if(fs.existsSync(library) === false)
     {
       throw new Error(`[${library}] does not exists!`);

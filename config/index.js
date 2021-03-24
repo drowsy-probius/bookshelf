@@ -84,6 +84,7 @@ module.exports = {
   redisPort,
   timeZone,
   logConfig, 
+  libraryDirectory,
   databaseDirectory,
   pluginDirectory,
   metadataDirectory,

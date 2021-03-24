@@ -28,6 +28,7 @@ module.exports = async function scan(){
       {
         if(isBookFolder(fileAbsolutePath))
         {
+          logger.verbose(`add a book to db: ${fileAbsolutePath}`);
           result.push({
             path: fileAbsolutePath,
             type: 'folder',
@@ -58,6 +59,7 @@ module.exports = async function scan(){
           continue;
         }
 
+        logger.verbose(`add a book to db: ${fileAbsolutePath}`);
         result.push({
           path: fileAbsolutePath,
           type: ext,

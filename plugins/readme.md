@@ -32,7 +32,7 @@ module.export = function scan(){
    */
   this.result
 
-  // do magic!
+  // do work!
 }
 ```
 

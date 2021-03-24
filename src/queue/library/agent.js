@@ -1,6 +1,6 @@
 const path = require('path');
 const WorkerQueue = require('../WorkerQueue');
-const {agent} = require('../../processor');
+const {agent} = require('../../processor/utils');
 
 const agentQueue = new WorkerQueue(agent, path.resolve(__dirname, 'agent.json'));
 

@@ -1,6 +1,11 @@
 function processor(job)
 {
-  console.log(`${job} on scanner.`)
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log(`${job} on scanner.`);
+      resolve(true);
+    }, 4321);
+  })
 }
 
 module.exports = processor;

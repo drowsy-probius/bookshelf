@@ -6,11 +6,17 @@ class WorkerQueue{
     this.q = [];
     this.interval = interval;
     this.jsonFilePath = jsonFilePath;
+    this.concurrency = 4;
+    this.currentJobs = 0;
+
+    this.reload();
+
     this.workFunction = workFunction;
-    this.repeat = setInterval(() => {
+
+    this.consume = setInterval(() => {
       this.save();
       this.work();
-    }, this.interval)
+    }, this.interval);
   }
   
   pop()
@@ -31,7 +37,7 @@ class WorkerQueue{
     }
     else
     {
-      return -1;
+      throw new Error(`queue is empty`);
     }
   }
 
@@ -62,11 +68,17 @@ class WorkerQueue{
 
   work()
   {
-    if(!this.empty())
+    if(!this.empty() && this.currentJobs < this.concurrency)
     {
       const job = this.top();
       this.pop();
-      this.workFunction(job);
+      console.log(`before ${job}: ${this.currentJobs}`); /** debug code */
+      this.currentJobs += 1;
+      this.workFunction(job)
+      .then(()=>{
+        this.currentJobs += -1;
+        console.log(`after ${job}: ${this.currentJobs}`); /** debug code */
+      })
     }
   }
 }

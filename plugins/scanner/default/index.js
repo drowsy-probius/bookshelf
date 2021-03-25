@@ -45,7 +45,7 @@ module.exports = async function scan(){
       else if(stat.isFile())
       {
         // zip, txt, pdf, epub logic
-        const ext = path.extname(fileAbsolutePath)
+        const ext = path.extname(fileAbsolutePath).toLowerCase();
         const fileExtensions = getAllFileExtensions();
 
         if(!fileExtensions.includes(ext))

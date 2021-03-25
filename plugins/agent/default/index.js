@@ -6,6 +6,14 @@
 
 // export * from './type/pdf';
 
+const supportedTypes = [
+  '.zip',
+  '.txt',
+  '.pdf',
+  '.epub',
+  'folder',
+]
+
 const defaultAgent = {
   Folder: require('./type/Folder'),
   Text: require('./type/Text'),
@@ -14,5 +22,5 @@ const defaultAgent = {
 
 module.exports = {
   defaultAgent,
-
+  supportedTypes,
 }

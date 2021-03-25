@@ -5,7 +5,7 @@ const Scanner = require('../utils/Scanner');
  * @param {Object} job {path: path.string, scanner: scannerName}
  * @returns null
  */
-function processor(job)
+function worker(job)
 {
   return new Promise((resolve, reject) => {
     const library = job.path;
@@ -28,4 +28,4 @@ function processor(job)
   })
 }
 
-module.exports = processor;
+module.exports = worker;

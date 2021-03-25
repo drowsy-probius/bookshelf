@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { type } = require('os');
 
 class WorkerQueue{
   constructor(workFunction, jsonFilePath, interval=1000)

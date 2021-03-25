@@ -1,12 +1,24 @@
-const openDatabase = require('./openDatabase');
+const openDatabase = require('./open');
+const initDatabase = require('./init');
 
 const databaseLists = {
   "main": "bookshelf.db",
+  "memory": ":memory:",
 }
+
 const databases = {};
 
-databaseLists.forEach((name) => {
-  databases[name] = openDatabase(databaseLists[name]);
+Object.keys(databaseLists).forEach( async (name) => {
+  try
+  {
+    databases[name] = await openDatabase(databaseLists[name]);
+    await initDatabase(name, databases[name]);
+  }
+  catch(e)
+  {
+    throw e;
+  }
 });
+
 
 module.exports = databases;

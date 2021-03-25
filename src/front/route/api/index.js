@@ -15,6 +15,13 @@ router.use('/testPush', (req, res) => {
   scannerQueue.push(Math.random() * 1000);
   res.send(`${job} added to scanner queue.\n`);
 })
+
+const {databaseQueue} = require('../../../queue');
+router.use('/testdb', (req, res) => {
+  const job = Math.random() * 1000
+  databaseQueue.push(job);
+  res.send(`${job} added to database queue\n`);
+})
 /**test */
 
 router.use('/', (req, res)=>{res.send('/api page')});

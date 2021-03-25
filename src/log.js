@@ -98,7 +98,10 @@ const loggerStream = {
   }
 }
 
-const loggerDatabase = (message) => {logger.debug(message, {filename: 'sqlite3', notFilePath: true})}
+const loggerDatabase = function(message, name)
+{
+  return (message) => {logger.debug(message, {filename: `[sqlite3] [${name}]`, notFilePath: true})}
+}
 
 
 /**

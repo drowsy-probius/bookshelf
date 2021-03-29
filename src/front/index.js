@@ -44,7 +44,7 @@ expressApp.use((err, req, res, next) => {
  * front test code
  */
 expressApp.listen(1234, '0.0.0.0', (req, res) => {
-  console.log(1111111);
+  console.log(`server listening on 0.0.0.0:1234`);
 })
 
 module.exports = expressApp;

@@ -1,10 +1,9 @@
-const databases = require('../database');
-
+const getDatabases = require('../../database');
 
 function worker(job)
 {
-  console.log(databases);
-  return new Promise((resolve, reject) => {
+  console.log(getDatabases);
+  return new Promise(async (resolve, reject) => {
     console.log(`${job} on database Queue`);
     resolve(true);
   })
